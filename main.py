@@ -11,6 +11,7 @@ app = Flask(__name__)
 @app.route('/',methods=['GET'])
 def main():
     return redirect(url_for('static', filename='index.html'))
+# marco puzza
 
 @app.route('/upload_data_buffer',methods=['POST'])
 def upload_data_buffer():
