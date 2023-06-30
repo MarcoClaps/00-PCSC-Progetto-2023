@@ -44,7 +44,10 @@ def upload():
     current_time = now.strftime("%H_%M_%S")
     fname = f'{current_time}.png'
     # file.save(os.path.join(f'tmp/test_{current_time}.png'))
-    client = storage.Client.from_service_account_json("facerecognition2023-84f934357826.json")
+    # purtoppo ho dovuto mettere il link assoluto perche non funzionava con il relativo
+    # quindi probabilmente sui vostri pc non va
+    client = storage.Client.from_service_account_json("C:\\GitHub\\00-PCSC-Progetto-2023\\facerecognition2023"
+                                                      "-84f934357826.json")
     bucket = client.bucket('doorbell-db')
     source_file_name = fname
     destination_blob_name = source_file_name
