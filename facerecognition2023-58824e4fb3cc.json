@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "facerecognition2023",
+  "private_key_id": "58824e4fb3ccb4cf3d43a713c7b7a05cb1de7afa",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCub8KH3wZjSJzH\nqjsnC4brfWgxre/FCF9DEzc4Yn8N6FcASs3O55XDjnpnUkKi/wgP58iJeniGCIee\n9rjMjCMCZNVfvwNoL3J9boFgfroPqPB9SD+wM5TIH1FoCVv5rYuOX+8KMJbOhSvX\nBIsO/QqHO5HgB0SpRqTkSJGnnvmcOXIfpmyiLs3gVPDd7k/oZU6kKZmpa7n0m+TA\nsuKheNF3KcvrTq0hueIFhQmWeQLCEClDKyLh+iv0ubfDZw9se8upE85nUXc48E3p\nq88ccr6nexQp6XI7t2MPkF7hFpDWxqslgaPw3KsH2mHDQVShZmCmWqrmZSc5CSTu\nSesmO4izAgMBAAECggEAGLdRMvtQ5mR1gn0GYKPrfBaK2u8wWBS1msVwP5cFNa1E\nFpCC1NxPhiP8CAPJ2VqVg9ttuL0XsrYmsUl4KdN5am9rJGPmUa7XZBpyTn/mUS24\n1aeVDpxganK1kC4zUA9dBNFnB2SXGbAY5CCKq5cDFOJF6x5chjeySX5W1Q9bgt0M\nkSxdx1Ak453D41e/mly/T/fbyLOqnFESqAQNJSbxoB3octfZSUYRbJf2gdICDsI0\n+6eug+qqBIpNS5fyfsk1jJ2eO5l5xmdGT0+UMp4gL3Uzl4gTl4f+UZLFHZaYJTqy\n/vz1ynShO+RGRBUXApS66ePWqHqSQPupTIkVqu44kQKBgQDukWEr/OCHLovd6Sxt\nT6vzl+3uaSFxN4NvDDRDCBV5fJS8A1SkMxzrCqJb5SQJ9MNPadQ8rZ5wXGxnfbcl\nkYvbyaZEF07uYsxrbfHUD+yYcijTdmynO4Jaijuo2ySQnyenj51HctnjNfKS20fP\n0U+qTJOe1JItrg2N562Llgs1ZQKBgQC7Lr926L17PxU7SSBrKtOqNFciRqVjlzmu\nMLLANPtHdrU/FSAhffyNfDK06+2YBAswsXUN6gBfe7t7OgTgdjXldO02sQ8DPlHZ\nXp4KNMPTPSrpSgUdfwh8ppp+xCzW0H37GmMLSrjZx7gAFAv1obnSH13w/R0rLaN5\nPx2Nmh3QNwKBgQDImcAOn9Ugdlgvobi0tdCNxMvRs97l91ryTl3Hm42LGOFr8pUC\neOQxE0EQam3SXVi5dvB6kTbvnhedMg2FbowepMHE8aByPOtMzicRPM6iJSQFI8gb\nGqPyg9fElXh6jwlmERGcGYvzTNKLAA2zRnppZXifjnjYJknJb+zyuZj1LQKBgHuC\nwTvJHx5v5aaU/hs4yyoIF2a6ju9EHf9eitRhIV1qavYRDn6LD1acmSjgdIpWQLwE\nnGRt/4kBsBgDlKw31CBwIwZvlqRhPsjbshSx9HUya1o8SVvJMuRtWoxDDgNA16AV\nLT2KNKcfLb5/e9S8vkxz/hzCJ7kSCEg86VdCVmHJAoGANxzifp3/4j0dOq0qzLcC\nWtHjqzfvlrJ1BrkIh0nGMsLne54OPh9NcleZc5vjTmVJg/mvF+hwlWI11WYIjMLs\n91o/F3TZHgLldmESh/Rqq5/H5DJtf7g5R7r29q7n5k5vmrXonXFzrkVjKElKg+Xq\nuMXP1nRYgV7tp9gEQO0PAqI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firestore-admin@facerecognition2023.iam.gserviceaccount.com",
+  "client_id": "105980873615266340596",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firestore-admin%40facerecognition2023.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
