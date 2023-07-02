@@ -15,14 +15,17 @@ function openCamera() {
         navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
             console.error('getUserMedia() error:', error));
     } else if (browserName == "Safari" && OSName == "MacOS") {
-        navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
+        navigator.mediaDevices.webkitGetUserMedia({ video: true }).then(gotMedia).catch(error =>
             console.error('getUserMedia() error:', error));
+    } else if (browserName == "Chrome" && OSName == "MacOS") {
+        navigator.mediaDevices.getDisplayMedia({ video: true }).then(gotMedia).catch(error =>
+            console.error('getDisplayMedia() error:', error));
     }
 
 
     function gotMedia(mediaStream) {
         const mediaStreamTrack = mediaStream.getVideoTracks()[0];
-
+        
         // set imageCapture based on the browser and operating system
         if (browserName == "Chrome" && OSName == "Windows") {
             const imageCapture = new ImageCapture(mediaStreamTrack);
