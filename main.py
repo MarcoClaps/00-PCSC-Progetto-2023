@@ -3,11 +3,13 @@ from datetime import datetime
 
 from flask import Flask, request, redirect, url_for, jsonify
 from google.cloud import storage
+from FaceRecognition import FaceRecognition
 
 # requires pyopenssl
 
 app = Flask(__name__)
-
+# initialize face recognition class
+fr = FaceRecognition()
 
 # palceholder for real face recognition funtion
 def fecerec():
