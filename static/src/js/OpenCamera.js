@@ -22,16 +22,6 @@ function openCamera() {
 
     function gotMedia(mediaStream) {
         const mediaStreamTrack = mediaStream.getVideoTracks()[0];
-        // get the operating system and browser
-        var OSName = "Unknown OS";
-        if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
-        if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
-        if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
-
-        var browserName = navigator.appName;
-        if (navigator.appVersion.indexOf("Edg") != -1) browserName = "Edge";
-        if (navigator.appVersion.indexOf("Chrome") != -1) browserName = "Chrome";
-        if (navigator.appVersion.indexOf("Safari") != -1) browserName = "Safari";
 
         // set imageCapture based on the browser and operating system
         if (browserName == "Chrome" && OSName == "Windows") {
