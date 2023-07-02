@@ -110,3 +110,11 @@ function openCamera() {
 }
 
 
+
+function get_dashboard() {
+    $.ajax({
+        type: 'GET',
+        url: '/dashboard',
+        contentType: false
+    })
+}
