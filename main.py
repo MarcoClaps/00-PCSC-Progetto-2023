@@ -39,7 +39,7 @@ def login():
         return redirect(url_for('/main'))
     username = request.values['u']
     password = request.values['p']
-    db = firestore.Client.from_service_account_json('credentials.json')
+    db = firestore.Client.from_service_account_json('C:\\GitHub\\00-PCSC-Progetto-2023\\facerecognition2023-58824e4fb3cc.json')
     user = db.collection('utenti').document(username).get()
     if user.exists and user.to_dict()['password'] == password:
         login_user(User(username))
@@ -90,7 +90,7 @@ def upload():
         # quindi probabilmente sui vostri pc non va
         client = storage.Client.from_service_account_json("C:\\GitHub\\00-PCSC-Progetto-2023\\facerecognition2023"
                                                           "-84f934357826.json")
-        bucket = client.bucket('doorbell-db')
+        bucket = client.bucket('dorbell-db')
         source_file_name = fname
         destination_blob_name = source_file_name
         blob = bucket.blob(destination_blob_name)
