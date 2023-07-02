@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+import os
 
 from flask import Flask, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
@@ -19,7 +20,7 @@ app.config['SECRET_KEY'] = secret_key
 login = LoginManager(app)
 login.login_view = '/static/geolocation.html'
 # initialize face recognition class
-fr = FaceRecognition()
+frec = FaceRecognition()
 
 # palceholder for real face recognition funtion
 def fecerec():
@@ -83,9 +84,20 @@ def upload():
         now = datetime.now()
         print(now)
         # formatto i nomi delle immagini come anno_mese_giorno__ora_minuti_secondi.png
+        # Option 1 - Server side
         current_time = now.strftime("%Y_%m_%d__%H_%M_%S")
         fname = f'{current_time}.png'
-        # file.save(os.path.join(f'tmp/test_{current_time}.png')) non serve passare dal locale
+        
+        # Option 2 - Local side
+        # # save fname in root folder
+        # file.save(fname)
+        # # save fname in face-recognizer/training folder
+        # file.save(f'face-recognizer/training/{fname}')
+        # frec.set_parameters(fname)
+        # frec.encode_known_faces()
+        # frec.recognize_faces()
+        
+        
         # purtoppo ho dovuto mettere il link assoluto perche non funzionava con il relativo
         # quindi probabilmente sui vostri pc non va
         client = storage.Client.from_service_account_json("C:\\GitHub\\00-PCSC-Progetto-2023\\facerecognition2023"
