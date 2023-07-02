@@ -1,10 +1,45 @@
 function openCamera() {
-    navigator.mediaDevices.getUserMedia({video: true}).then(gotMedia).catch(error =>
-        console.error('getUserMedia() error:', error));
+    // get the operating system and browser
+    var OSName = "Unknown OS";
+    if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
+    if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
+    if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
+
+    var browserName = navigator.appName;
+    if (navigator.appVersion.indexOf("Edg") != -1) browserName = "Edge";
+    if (navigator.appVersion.indexOf("Chrome") != -1) browserName = "Chrome";
+    if (navigator.appVersion.indexOf("Safari") != -1) browserName = "Safari";
+
+    // for chrome and windows we have to use the old method
+    if (browserName == "Chrome" && OSName == "Windows") {
+        navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
+            console.error('getUserMedia() error:', error));
+    } else if (browserName == "Safari" && OSName == "MacOS") {
+        navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
+            console.error('getUserMedia() error:', error));
+    }
+
 
     function gotMedia(mediaStream) {
         const mediaStreamTrack = mediaStream.getVideoTracks()[0];
-        const imageCapture = new ImageCapture(mediaStreamTrack);
+        // get the operating system and browser
+        var OSName = "Unknown OS";
+        if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
+        if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
+        if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
+
+        var browserName = navigator.appName;
+        if (navigator.appVersion.indexOf("Edg") != -1) browserName = "Edge";
+        if (navigator.appVersion.indexOf("Chrome") != -1) browserName = "Chrome";
+        if (navigator.appVersion.indexOf("Safari") != -1) browserName = "Safari";
+
+        // set imageCapture based on the browser and operating system
+        if (browserName == "Chrome" && OSName == "Windows") {
+            const imageCapture = new ImageCapture(mediaStreamTrack);
+        } else if (browserName == "Safari" && OSName == "MacOS") {
+            const imageCapture = new ImageCapture(mediaStreamTrack);
+        }
+        // const imageCapture = new ImageCapture(mediaStreamTrack);
 
         //console.log(imageCapture);
 
@@ -24,7 +59,7 @@ function openCamera() {
                     contentType: false
                 }).done(function (data) {
                     $('#result').text(data);
-                        console.log(data);
+                    console.log(data);
                 });
 
                 img.onload = () => {
