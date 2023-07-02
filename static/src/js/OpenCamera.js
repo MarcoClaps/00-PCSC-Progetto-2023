@@ -1,38 +1,42 @@
 function openCamera() {
-    // get the operating system and browser
-    var OSName = "Unknown OS";
-    if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
-    if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
-    if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
+    
+    // // get the operating system and browser
+    // var OSName = "Unknown OS";
+    // if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
+    // if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
+    // if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
 
-    var browserName = navigator.appName;
-    if (navigator.appVersion.indexOf("Edg") != -1) browserName = "Edge";
-    if (navigator.appVersion.indexOf("Chrome") != -1) browserName = "Chrome";
-    if (navigator.appVersion.indexOf("Safari") != -1) browserName = "Safari";
+    // var browserName = navigator.appName;
+    // if (navigator.appVersion.indexOf("Edg") != -1) browserName = "Edge";
+    // if (navigator.appVersion.indexOf("Chrome") != -1) browserName = "Chrome";
+    // if (navigator.appVersion.indexOf("Safari") != -1) browserName = "Safari";
 
-    // for chrome and windows we have to use the old method
-    if (browserName == "Chrome" && OSName == "Windows") {
-        navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
-            console.error('getUserMedia() error:', error));
-    } else if (browserName == "Safari" && OSName == "MacOS") {
-        navigator.mediaDevices.webkitGetUserMedia({ video: true }).then(gotMedia).catch(error =>
-            console.error('getUserMedia() error:', error));
-    } else if (browserName == "Chrome" && OSName == "MacOS") {
-        navigator.mediaDevices.getDisplayMedia({ video: true }).then(gotMedia).catch(error =>
-            console.error('getDisplayMedia() error:', error));
-    }
+    // // for chrome and windows we have to use the old method
+    // if (browserName == "Chrome" && OSName == "Windows") {
+    //     navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
+    //         console.error('getUserMedia() error:', error));
+    // } else if (browserName == "Safari" && OSName == "MacOS") {
+    //     navigator.mediaDevices.webkitGetUserMedia({ video: true }).then(gotMedia).catch(error =>
+    //         console.error('getUserMedia() error:', error));
+    // } else if (browserName == "Chrome" && OSName == "MacOS") {
+    //     navigator.mediaDevices.getDisplayMedia({ video: true }).then(gotMedia).catch(error =>
+    //         console.error('getDisplayMedia() error:', error));
+    // }
+
+    navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
+        console.error('getUserMedia() error:', error));
 
 
     function gotMedia(mediaStream) {
         const mediaStreamTrack = mediaStream.getVideoTracks()[0];
         
-        // set imageCapture based on the browser and operating system
-        if (browserName == "Chrome" && OSName == "Windows") {
-            const imageCapture = new ImageCapture(mediaStreamTrack);
-        } else if (browserName == "Safari" && OSName == "MacOS") {
-            const imageCapture = new ImageCapture(mediaStreamTrack);
-        }
-        // const imageCapture = new ImageCapture(mediaStreamTrack);
+        // // set imageCapture based on the browser and operating system
+        // if (browserName == "Chrome" && OSName == "Windows") {
+        //     const imageCapture = new ImageCapture(mediaStreamTrack);
+        // } else if (browserName == "Safari" && OSName == "MacOS") {
+        //     const imageCapture = new ImageCapture(mediaStreamTrack);
+        // }
+        const imageCapture = new ImageCapture(mediaStreamTrack);
 
         //console.log(imageCapture);
 
