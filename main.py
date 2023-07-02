@@ -4,20 +4,14 @@ from datetime import datetime
 from flask import Flask, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
 from secret import secret_key, usersdb
+
 from google.cloud import storage
 from google.cloud import firestore
 
 from FaceRecognition import FaceRecognition
+from User import User
 
 # requires pyopenssl
-
-
-class User(UserMixin):
-    def __init__(self, username):
-        super().__init__()
-        self.id = username
-        self.username = username
-        self.par = {}
 
 
 app = Flask(__name__)
