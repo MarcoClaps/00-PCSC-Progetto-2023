@@ -1,12 +1,28 @@
 import json
 from datetime import datetime
 
-from flask import Flask, request, redirect, url_for, jsonify
+from flask import Flask, request, redirect, url_for
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
+from secret import secret_key, usersdb
 from google.cloud import storage
+from google.cloud import firestore
+
 
 # requires pyopenssl
 
+
+class User(UserMixin):
+    def __init__(self, username):
+        super().__init__()
+        self.id = username
+        self.username = username
+        self.par = {}
+
+
 app = Flask(__name__)
+app.config['SECRET_KEY'] = secret_key
+login = LoginManager(app)
+login.login_view = '/static/geolocation.html'
 
 
 # palceholder for real face recognition funtion
@@ -14,10 +30,35 @@ def fecerec():
     return "wellcome"
 
 
+@login.user_loader
+def load_user(username):
+    if username in usersdb:
+        return User(username)
+    return None
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('/main'))
+    username = request.values['u']
+    password = request.values['p']
+    db = firestore.Client.from_service_account_json('credentials.json')
+    user = db.collection('utenti').document(username).get()
+    if user.exists and user.to_dict()['password'] == password:
+        login_user(User(username))
+    return redirect('/static/geolocation.html')
+
+
 # doorbell
 @app.route('/', methods=['GET'])
 def main():
     return redirect(url_for('static', filename='index.html'))
+
+
+@app.route('/dashboard', methods=['GET'])
+def main_log():
+    return redirect(url_for('static', filename='dashboard.html'))
 
 
 @app.route('/upload_data_buffer', methods=['POST'])
@@ -62,6 +103,12 @@ def upload():
         res = fecerec()
         # return jsonify(result=res)
         return res
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect('/')
 
 
 if __name__ == '__main__':
