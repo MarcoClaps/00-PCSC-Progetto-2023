@@ -1,10 +1,8 @@
 import json
 from datetime import datetime
-import os
-from abs_path import abs_firestore, abs_cstorage
-from flask import Flask, request, redirect, url_for
+from flask import Flask, request, redirect, url_for, render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
-from secret import secret_key, usersdb
+from secret import secret_key
 
 from google.cloud import storage
 from google.cloud import firestore
@@ -18,7 +16,7 @@ from User import User
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
 login = LoginManager(app)
-login.login_view = '/static/geolocation.html'
+login.login_view = '/static/login.html'
 # initialize face recognition class
 frec = FaceRecognition()
 
@@ -30,7 +28,9 @@ def fecerec():
 
 @login.user_loader
 def load_user(username):
-    if username in usersdb:
+    db = firestore.Client.from_service_account_json('facerecognition2023-58824e4fb3cc.json')
+    user = db.collection('user_db').document(username).get()
+    if user.exists:
         return User(username)
     return None
 
@@ -41,21 +41,27 @@ def login():
         return redirect(url_for('/main'))
     username = request.values['u']
     password = request.values['p']
-    db = firestore.Client.from_service_account_json(
-        abs_firestore)
-    user = db.collection('utenti').document(username).get()
+
+    db = firestore.Client.from_service_account_json('facerecognition2023-58824e4fb3cc.json')
+    user = db.collection('user_db').document(username).get()
     if user.exists and user.to_dict()['password'] == password:
         login_user(User(username))
-    return redirect('/static/geolocation.html')
+        next_page = request.args.get('next')
+        if not next_page:
+            next_page = '/main'
+        return redirect(next_page)
+    return redirect('/static/login.html')
 
 
 # doorbell
 @app.route('/', methods=['GET'])
+@app.route('/main', methods=['GET', 'POST'])
 def main():
-    return redirect(url_for('static', filename='index.html'))
+    return render_template('index.html')
 
 
 @app.route('/dashboard', methods=['GET'])
+@login_required
 def main_log():
     return redirect(url_for('static', filename='dashboard.html'))
 
@@ -101,8 +107,8 @@ def upload():
 
         # purtoppo ho dovuto mettere il link assoluto perche non funzionava con il relativo
         # quindi probabilmente sui vostri pc non va
-        client = storage.Client.from_service_account_json(abs_cstorage)
-        bucket = client.bucket('dorbell-db')
+        client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+        bucket = client.bucket('door_bell')
         source_file_name = fname
         destination_blob_name = source_file_name
         blob = bucket.blob(destination_blob_name)
