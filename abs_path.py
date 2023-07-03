@@ -1,2 +1,2 @@
-abs_firestore = ""
-abs_cstorage = ""
+abs_firestore = "C:\Users\marco\Desktop\Università\Magistrale Ingegneria Gestionale 2021-\2° Anno\Secondo Semestre\Pervasive Computing e Servizi Cloud\00-Codice\00-PCSC-Progetto-2023\facerecognition2023-58824e4fb3cc.json"
+abs_cstorage = "C:\Users\marco\Desktop\Università\Magistrale Ingegneria Gestionale 2021-\2° Anno\Secondo Semestre\Pervasive Computing e Servizi Cloud\00-Codice\00-PCSC-Progetto-2023\facerecognition2023-84f934357826.json"
