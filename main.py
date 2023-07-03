@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 import os
-
+from abs_path import abs_firestore, abs_cstorage
 from flask import Flask, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
 from secret import secret_key, usersdb
@@ -22,6 +22,7 @@ login.login_view = '/static/geolocation.html'
 # initialize face recognition class
 frec = FaceRecognition()
 
+
 # palceholder for real face recognition funtion
 def fecerec():
     return "wellcome"
@@ -40,7 +41,8 @@ def login():
         return redirect(url_for('/main'))
     username = request.values['u']
     password = request.values['p']
-    db = firestore.Client.from_service_account_json('C:\\GitHub\\00-PCSC-Progetto-2023\\facerecognition2023-58824e4fb3cc.json')
+    db = firestore.Client.from_service_account_json(
+        abs_firestore)
     user = db.collection('utenti').document(username).get()
     if user.exists and user.to_dict()['password'] == password:
         login_user(User(username))
@@ -87,7 +89,7 @@ def upload():
         # Option 1 - Server side
         current_time = now.strftime("%Y_%m_%d__%H_%M_%S")
         fname = f'{current_time}.png'
-        
+
         # Option 2 - Local side
         # # save fname in root folder
         # file.save(fname)
@@ -96,12 +98,10 @@ def upload():
         # frec.set_parameters(fname)
         # frec.encode_known_faces()
         # frec.recognize_faces()
-        
-        
+
         # purtoppo ho dovuto mettere il link assoluto perche non funzionava con il relativo
         # quindi probabilmente sui vostri pc non va
-        client = storage.Client.from_service_account_json("C:\\GitHub\\00-PCSC-Progetto-2023\\facerecognition2023"
-                                                          "-84f934357826.json")
+        client = storage.Client.from_service_account_json(abs_cstorage)
         bucket = client.bucket('dorbell-db')
         source_file_name = fname
         destination_blob_name = source_file_name
