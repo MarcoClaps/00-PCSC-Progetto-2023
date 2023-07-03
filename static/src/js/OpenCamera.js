@@ -65,7 +65,7 @@ function openCamera() {
             capture();
         });
     }
-
+    setTimeout(result,3000);
 //    function gotMedia(mediaStream) {
 //        const mediaStreamTrack = mediaStream.getVideoTracks()[0];
 //
