@@ -98,12 +98,12 @@ def upload():
 
         # Option 2 - Local side
         # # save fname in root folder
-        # file.save(fname)
-        # # save fname in face-recognizer/training folder
-        # file.save(f'face-recognizer/training/{fname}')
-        # frec.set_parameters(fname)
-        # frec.encode_known_faces()
-        # frec.recognize_faces()
+        file.save(fname)
+        # save fname in face-recognizer/training folder
+        file.save(f'face-recognizer/training/{fname}')
+        frec.set_parameters(fname)
+        frec.encode_known_faces()
+        frec.recognize_faces()
 
         # purtoppo ho dovuto mettere il link assoluto perche non funzionava con il relativo
         # quindi probabilmente sui vostri pc non va
