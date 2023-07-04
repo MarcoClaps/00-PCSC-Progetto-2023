@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gestione_Permessi</title>
+    <script>
+        function navigate() {
+            var selectedOption = document.getElementById("menu").value;
+            if (selectedOption === "login_page") {
+                window.location.href = "login_page.html";
+            } else if (selectedOption === "Landing_Page") {
+                window.location.href = "Landing_Page.html";
+            }
+        }
+    </script>
+</head>
+<body>
+
+
+<form action="/dashboard/gest_perm/add_perm" method="post" enctype="multipart/form-data">
+  <label for="text">Text:</label>
+  <textarea id="text" name="text"></textarea>
+  <br><br>
+  <label for="image1">Image 1:</label>
+  <input type="file" id="image1" name="image">
+  <br><br>
+  <label for="image2">Image 2:</label>
+  <input type="file" id="image2" name="image">
+  <br><br>
+  <label for="image3">Image 3:</label>
+  <input type="file" id="image3" name="image">
+  <br><br>
+  <label for="image4">Image 4:</label>
+  <input type="file" id="image4" name="image">
+  <br><br>
+  <label for="image5">Image 5:</label>
+  <input type="file" id="image5" name="image">
+  <br><br>
+  <label for="image6">Image 6:</label>
+  <input type="file" id="image6" name="image">
+  <br><br>
+  <label for="image7">Image 7:</label>
+  <input type="file" id="image7" name="image">
+  <br><br>
+  <label for="image8">Image 8:</label>
+  <input type="file" id="image8" name="image">
+  <br><br>
+  <label for="image9">Image 9:</label>
+  <input type="file" id="image9" name="image">
+  <br><br>
+  <label for="image10">Image 10:</label>
+  <input type="file" id="image10" name="image">
+  <br><br>
+  <input type="submit" value="Upload">
+</form>
+
+</body>
+</html>

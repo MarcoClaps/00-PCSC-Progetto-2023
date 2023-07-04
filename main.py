@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 from flask import Flask, request, redirect, url_for, render_template
-from flask_login import LoginManager, current_user, login_user, logout_user, login_required, UserMixin
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from secret import secret_key
 
 from google.cloud import storage
@@ -62,8 +62,59 @@ def main():
 
 @app.route('/dashboard', methods=['GET'])
 @login_required
-def main_log():
+def load_dashboard():
     return redirect(url_for('static', filename='dashboard.html'))
+
+
+@app.route('/dashboard/gest_perm', methods=['GET'])
+@login_required
+def gest_perm():
+    client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+    bucket = client.bucket('face_db')
+    blobs = bucket.list_blobs(prefix="training/")
+
+    files = []
+    for blob in blobs:
+        if '.' in blob.name:
+            files.append(blob.name)
+    names = set([file.split('_')[0].split('/')[1] for file in files])
+
+    print(files)
+
+    return render_template('gest_perm_tmp.html', names=names, files=files)
+
+
+# per ora l'ho fatto così ma possimo valutare di farlo in un altro modo ad esempio come un pop up
+@app.route('/dashboard/gest_perm/add_perm', methods=['GET', 'POST'])
+@login_required
+def add_perm():
+    # se il metodo è get allora carico la pagina
+
+    if request.method == 'GET':
+        return url_for('static', filename='add_perm.html')
+    # se il metodo è post allora salvo i dati nel db su cloud storage
+    else:
+        client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+        bucket_name = 'face_db'
+        directory_name = 'training/'
+        # nel text dovrà essere presente l'id univoco che rappresenta ogni persona
+        # TODO: aggiungere un controllo per verificare che l'id sia univoco e che non sia già presente nel db
+        text = request.form['text']
+        files = request.files.getlist('image')
+        print(text, files)
+
+        if text and files:
+            bucket = client.bucket(bucket_name)
+            for file in files:
+                if file:
+                    blob = bucket.blob(directory_name + text + '_' + file.filename)
+                    blob.upload_from_string(
+                        file.read(),
+                        content_type=file.content_type
+                    )
+            return 'Data uploaded successfully'
+        else:
+            return 'No data selected'
 
 
 @app.route('/upload_data_buffer', methods=['POST'])
@@ -105,8 +156,6 @@ def upload():
         frec.encode_known_faces()
         frec.recognize_faces()
 
-        # purtoppo ho dovuto mettere il link assoluto perche non funzionava con il relativo
-        # quindi probabilmente sui vostri pc non va
         client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
         bucket = client.bucket('door_bell')
         source_file_name = fname

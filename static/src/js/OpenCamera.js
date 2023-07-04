@@ -120,12 +120,3 @@ function dataURItoBlob(dataURI) {
     }
     return new Blob([ab], { type: mimeString });
 }
-
-
-function get_dashboard() {
-    $.ajax({
-        type: 'GET',
-        url: '/dashboard',
-        contentType: false
-    })
-}

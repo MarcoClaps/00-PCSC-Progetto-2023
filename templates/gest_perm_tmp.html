@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gestione_Permessi</title>
+    <script>
+        function navigate() {
+            var selectedOption = document.getElementById("menu").value;
+            if (selectedOption === "login_page") {
+                window.location.href = "login_page.html";
+            } else if (selectedOption === "Landing_Page") {
+                window.location.href = "Landing_Page.html";
+            }
+        }
+    </script>
+</head>
+<body>
+
+
+<a href="../static/add_perm_tmp.html" id="aggiungi permessi">aggiungi permessi</a> <br>
+
+<a href="login_page.html" id="login_page">login page</a><br>
+<!-- Contenuto della Sezione 1 -->
+
+<a href="../static/Landing_Page.html" id="Landing_Page">Landing_Page</a><br>
+<!-- Contenuto della Sezione 2 -->
+ {% for n in names %}
+  {{ n }}
+     <button type="button" onclick="location.href='/delete/{{n}}'">cancella</button>
+     <button type="button" onclick="location.href='/change/{{n}}'">modifica</button>
+     <br>
+{% endfor %}
+<br>
+<a href="/logout">logout</a>
+
+</body>
+</html>
