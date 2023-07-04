@@ -151,9 +151,10 @@ def upload():
         # # save fname in root folder
         file.save(fname)
         # save fname in face-recognizer/training folder
-        file.save(f'face-recognizer/training/{fname}')
+        # file.save(f'face-recognizer/training/{fname}')
         frec.set_parameters(fname)
-        frec.encode_known_faces()
+        # encode only if necessary
+        frec.check_backup_encoded()
         frec.recognize_faces()
 
         client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
