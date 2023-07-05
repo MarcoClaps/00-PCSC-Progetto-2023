@@ -28,7 +28,8 @@ def fecerec():
 
 @login.user_loader
 def load_user(username):
-    db = firestore.Client.from_service_account_json('facerecognition2023-58824e4fb3cc.json')
+    db = firestore.Client.from_service_account_json(
+        'facerecognition2023-58824e4fb3cc.json')
     user = db.collection('user_db').document(username).get()
     if user.exists:
         return User(username)
@@ -42,7 +43,8 @@ def login():
     username = request.values['u']
     password = request.values['p']
 
-    db = firestore.Client.from_service_account_json('facerecognition2023-58824e4fb3cc.json')
+    db = firestore.Client.from_service_account_json(
+        'facerecognition2023-58824e4fb3cc.json')
     user = db.collection('user_db').document(username).get()
     if user.exists and user.to_dict()['password'] == password:
         login_user(User(username))
@@ -69,7 +71,8 @@ def load_dashboard():
 @app.route('/dashboard/gest_perm', methods=['GET'])
 @login_required
 def gest_perm():
-    client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+    client = storage.Client.from_service_account_json(
+        'facerecognition2023-84f934357826.json')
     bucket = client.bucket('face_db')
     blobs = bucket.list_blobs(prefix="training/")
 
@@ -94,7 +97,8 @@ def add_perm():
         return url_for('static', filename='add_perm.html')
     # se il metodo è post allora salvo i dati nel db su cloud storage
     else:
-        client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+        client = storage.Client.from_service_account_json(
+            'facerecognition2023-84f934357826.json')
         bucket_name = 'face_db'
         directory_name = 'training/'
         # nel text dovrà essere presente l'id univoco che rappresenta ogni persona
@@ -107,7 +111,8 @@ def add_perm():
             bucket = client.bucket(bucket_name)
             for file in files:
                 if file:
-                    blob = bucket.blob(directory_name + text + '_' + file.filename)
+                    blob = bucket.blob(
+                        directory_name + text + '_' + file.filename)
                     blob.upload_from_string(
                         file.read(),
                         content_type=file.content_type
@@ -139,34 +144,49 @@ def upload():
     # check if the post request has the file part
     if request.method == 'POST':
         file = request.files['file']
-
+        # get the current time
         now = datetime.now()
-        print(now)
+        print("Accesso alle: ", now)
         # formatto i nomi delle immagini come anno_mese_giorno__ora_minuti_secondi.png
         # Option 1 - Server side
         current_time = now.strftime("%Y_%m_%d__%H_%M_%S")
         fname = f'{current_time}.png'
 
-        # Option 2 - Local side
-        # # save fname in root folder
-        file.save(fname)
-        # save fname in face-recognizer/training folder
-        # file.save(f'face-recognizer/training/{fname}')
-        frec.set_parameters(fname)
-        # encode only if necessary
-        frec.check_backup_encoded()
-        frec.recognize_faces()
-
-        client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+        # Save the acces photo to the cloud
+        client = storage.Client.from_service_account_json(
+            'facerecognition2023-84f934357826.json')
         bucket = client.bucket('door_bell')
         source_file_name = fname
         destination_blob_name = source_file_name
         blob = bucket.blob(destination_blob_name)
 
         blob.upload_from_string(file.read(), content_type=file.content_type)
-        res = fecerec()
-        # return jsonify(result=res)
-        return res
+
+        # Face recognition
+        frec.set_parameters(fname)
+        # encode only if necessary
+        frec.check_backup_encoded()
+        # recognition_results should have only one element
+        recognition_result = frec.recognize_faces()
+
+        # first delete the image from the bucket of the doorbell
+        blob.delete()
+        # then save the image in the bucket of the doorbell
+        # TODO: find a better way to save the new image
+        # source_file_name = fname
+        source_file_name = fname + '<->' + recognition_result[0]
+        destination_blob_name = source_file_name
+        blob = bucket.blob(destination_blob_name)
+
+        # TODO: ora salvo l'immagine con il nome dell'utente riconosciuto, però l'immagine resta la stessa.
+        # Sarebbe meglio usare l'immagine con il volto messo nel riquadro e il nome
+        # blob.upload_from_string(recognition_result[1].read(), content_type=file.content_type)
+        blob.upload_from_string(file.read(), content_type=file.content_type)
+
+        if recognition_result == 'Sconosciuto':
+            return 'Utente non riconosciuto'
+        else:
+            return 'Benvenuto ' + recognition_result[0].split('.p')[0]
 
 
 @app.route('/logout')

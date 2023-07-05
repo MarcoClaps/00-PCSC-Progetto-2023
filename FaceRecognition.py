@@ -5,6 +5,7 @@ import pickle
 from collections import Counter
 from PIL import Image, ImageDraw
 from google.cloud import storage
+import numpy as np
 
 
 class FaceRecognition():
@@ -23,6 +24,8 @@ class FaceRecognition():
         self.BOUNDING_BOX_COLOR = (0, 0, 255)  # blue
         self.TEXT_COLOR = (255, 255, 255)  # white
 
+        # input variabiles
+        self.image_filepath= None
         self.input_image = None
         self.validation_path = None
         self.validation_images = list()
@@ -32,6 +35,13 @@ class FaceRecognition():
         # check lists
         self.checkListWrite = list()
         self.checkListRead = list()
+
+        # results
+        self.recongition_result = list()
+        
+        # Cloud variables
+        self.cs_client = storage.Client.from_service_account_json(
+            'facerecognition2023-84f934357826.json')
 
         Path("face-recognizer/training").mkdir(exist_ok=True)
         Path("face-recognizer/output").mkdir(exist_ok=True)
@@ -51,43 +61,43 @@ class FaceRecognition():
         print("Encoding known faces...", '\n')
         names = []
         encodings = []
-        encodings_location = self.DEFAULT_ENCODINGS_PATH.joinpath(
-            'encodings.pkl')
-        ######Cluod file
-        client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
-        bucket = client.bucket('face_db')
+        encodings_location = self.DEFAULT_ENCODINGS_PATH.joinpath('encodings.pkl')
+        # Cloud file
+        bucket = self.cs_client .bucket('face_db')
         blobs = bucket.list_blobs(prefix="training/")
         for filepath in blobs:
-          if filepath.name == "training/":
-              continue
+            if filepath.name == "training/":
+                continue
+            
+            print("Filepath: ",filepath)
+            self.validation_path = filepath.name.split(" .")[0].split("/")[1]
+            # print the path
+            print("Encoding: ", self.validation_path)
+            # append the path to the list
+            self.validation_images.append(filepath)
 
-        #####Local file
-        # for filepath in Path("face-recognizer/training").rglob("*.png"):
-        self.validation_path = filepath.name.split(" .")[0].split("/")[1]
-        # print the path
-        print("Encoding: ", self.validation_path)
-        # append the path to the list
-        self.validation_images.append(filepath)
+            # load the image
+            # Local file
+            # image = face_recognition.load_image_file(filepath)
+            # Cloud file
+            image = face_recognition.load_image_file(
+                BytesIO(filepath.download_as_bytes()))
+            print("image: ", image)
+            # found the patches of the face
+            face_locations = face_recognition.face_locations(image,
+                                                            model=model)
+            # encode the face
+            face_encodings = face_recognition.face_encodings(image,
+                                                            face_locations)
 
-        # load the image
-        #####Local file
-        # image = face_recognition.load_image_file(filepath)
-        ######Cluod file
-        image = face_recognition.load_image_file(BytesIO(filepath.download_as_bytes()))
-        # found the patches of the face
-        face_locations = face_recognition.face_locations(image,
-                                                         model=model)
-        # encode the face
-        face_encodings = face_recognition.face_encodings(image,
-                                                         face_locations)
-
-        for encoding in face_encodings:
-            names.append(self.validation_path)
-            encodings.append(encoding)
+            for encoding in face_encodings:
+                names.append(self.validation_path)
+                encodings.append(encoding)
 
         # save the encodings
         self.name_encodings = {"names": names, "encodings": encodings}
         print("Saving encodings to disk...")
+        # TODO: save the encodings to the cloud
         with encodings_location.open("wb") as f:
             pickle.dump(self.name_encodings, f)
 
@@ -99,30 +109,47 @@ class FaceRecognition():
 
     # private recognition function
     def _recognize_face(self, unknown_encoding, loaded_encodings):
-        boolean_matches = face_recognition.compare_faces(
-            loaded_encodings["encodings"], unknown_encoding
-        )
-        votes = Counter(
-            name
-            for match, name in zip(boolean_matches, loaded_encodings["names"])
-            if match
-        )
+        """
+        Private function to recogni
+
+        Args:
+            unknown_encoding (pkl): new encoding to compare
+            loaded_encodings (pkl): encodings to compare
+
+        Returns:
+            name: the name of the person which is recognized as the most similar with the most votes
+        """
+        boolean_matches = face_recognition.compare_faces(loaded_encodings["encodings"],
+                                                         unknown_encoding)
+        votes = Counter(name for match, name in
+                        zip(boolean_matches, loaded_encodings["names"]) if match)
+        # if a set of votes is created, return the most voted name
         if votes:
+            print("Votes: ", votes)
             return votes.most_common(1)[0][0]
 
     # private function to draw the squares around the faces
 
     def _display_face(self, draw, bounding_box, name):
+        """
+        Private function to draw the squares around the faces
+
+        Args:
+            draw (PIL.Image): pillow image
+            bounding_box (tuple): box that sourround a face
+            name (string): name of the person
+        """
         top, right, bottom, left = bounding_box
+
         draw.rectangle(((left, top), (right, bottom)),
                        outline=self.BOUNDING_BOX_COLOR)
-        text_left, text_top, text_right, text_bottom = draw.textbbox(
-            (left, bottom), name
-        )
+
+        text_left, text_top, text_right, text_bottom = draw.textbbox((left, bottom),
+                                                                     name, align="center")
         draw.rectangle(
             ((text_left, text_top), (text_right, text_bottom)),
-            fill="blue",
-            outline="blue",
+            fill="black",
+            outline="black",
         )
         draw.text(
             (text_left, text_top),
@@ -132,13 +159,14 @@ class FaceRecognition():
 
     def recognize_faces(self,
                         model: str = "cnn"):
-        """_summary_
+        """
+            Public function to recognize the faces in the image
 
         Args:
             image_location (str): _description_
             model (str, optional): _description_. Defaults to "cnn".
         """
-        print("Recognizing faces...", '\n')
+        print("Locating faces...", '\n')
         # set the encodings location
         encodings_location = self.DEFAULT_ENCODINGS_PATH.joinpath(
             'encodings.pkl')
@@ -146,8 +174,26 @@ class FaceRecognition():
             loaded_encodings = pickle.load(f)
 
         print("Loading the image...")
-        self.input_image = face_recognition.load_image_file(self.input_image)
+        
+        # Cloud file
+        bucket = self.cs_client.bucket('door_bell')
+        # load only the last image
+        blobs = bucket.list_blobs()
+        for filepath in blobs:
+            # pick only the last image
+            self.image_filepath = filepath
+            self.validation_path = filepath.name
+        # print the path
+        print("Looking for: ", self.validation_path)
+        # append the path to the list
+        self.validation_images.append(self.image_filepath)
 
+        # Cloud file
+        # download the image from the cloud so that's readable by face_recognition
+        self.input_image = face_recognition.load_image_file(
+                BytesIO(filepath.download_as_bytes()))
+        
+        print("Immagine trovata. Inizio riconoscimento... ")
         # find the faces in the image file
         input_face_locations = face_recognition.face_locations(
             self.input_image, model=model
@@ -155,20 +201,24 @@ class FaceRecognition():
         # find the encodings of the faces
         input_face_encodings = face_recognition.face_encodings(
             self.input_image, input_face_locations
-        ) 
-
+        )
         # generate the pillow image
         pillow_image = Image.fromarray(self.input_image)
         # create the draw object
         draw = ImageDraw.Draw(pillow_image)
-        
+
         print("Recognizing faces...")
         for bounding_box, unknown_encoding in zip(
                 input_face_locations, input_face_encodings):
             name = self._recognize_face(unknown_encoding, loaded_encodings)
             if not name:
-                name = "Unknown"
-            print(name, bounding_box)
+                print("Volto non riconosciuto")
+                name = "Sconoisciuto"
+                self.recongition_result.append("Sconosciuto")
+            else:
+                print("Riconosciuto", name)
+                self.recongition_result.append(name)
+
             # set the bounding box and the name
             self._display_face(draw, bounding_box, name)
 
@@ -176,8 +226,12 @@ class FaceRecognition():
         del draw
         # show the image
         pillow_image.show()
+        # convert the image to png without saving locally
+        pillow_image = pillow_image.convert("RGB")
+        self.recongition_result.append(pillow_image)
+        print("Recognition ended!")
         
-        print("Recognition completed!")
+        return self.recongition_result
 
     def validate(self, model: str = "hog"):
         for filepath in Path("face_recognizer/validation").rglob("*"):
@@ -196,30 +250,32 @@ class FaceRecognition():
         print("Checking backup...")
         try:
             with open("face-recognizer/check_encoded.txt", "r") as f:
-                
+
                 # put everything in a list
                 self.checkListRead = list()
                 for line in f:
-                    names=line.split('-')
+                    names = line.split('-')
                     for name in names:
                         if name != '':
                             self.checkListRead.append(name)
-                
+
                 # self.checkListWrite is the list of images in the training folder
                 self.checkListWrite = list()
-                client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+                client = storage.Client.from_service_account_json(
+                    'facerecognition2023-84f934357826.json')
                 bucket = client.bucket('face_db')
                 blobs = bucket.list_blobs(prefix="training/")
                 for filepath in blobs:
                     if filepath.name == "training/":
                         continue
                 # for filepath in Path("face-recognizer/training").rglob("*.png"):
-                    self.checkListWrite.append(filepath.name.split(" .")[0].split("/")[1])
-                
+                    self.checkListWrite.append(
+                        filepath.name.split(" .")[0].split("/")[1])
+
                 # sort the lists alphabetically
                 self.checkListRead.sort()
                 self.checkListWrite.sort()
-                
+
                 # if checkListRead has the same elements as checkListWrite, then everything is ok
                 if self.checkListRead == self.checkListWrite:
                     print("Backup checked - Encode not needed")

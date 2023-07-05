@@ -59,7 +59,7 @@ function openCamera() {
                     console.log(data);
                 });
 
-                window.setTimeout(capture, 100000);
+                // window.setTimeout(capture, 100000);
             }
 
             capture();
