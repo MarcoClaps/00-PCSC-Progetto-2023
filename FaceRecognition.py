@@ -1,3 +1,4 @@
+from io import BytesIO
 from pathlib import Path
 import face_recognition
 import pickle
@@ -57,30 +58,32 @@ class FaceRecognition():
         bucket = client.bucket('face_db')
         blobs = bucket.list_blobs(prefix="training/")
         for filepath in blobs:
+          if filepath.name == "training/":
+              continue
 
         #####Local file
         # for filepath in Path("face-recognizer/training").rglob("*.png"):
-            self.validation_path = filepath.name.split(" .")[0]
-            # print the path
-            print("Encoding: ", self.validation_path)
-            # append the path to the list
-            self.validation_images.append(filepath)
+        self.validation_path = filepath.name.split(" .")[0].split("/")[1]
+        # print the path
+        print("Encoding: ", self.validation_path)
+        # append the path to the list
+        self.validation_images.append(filepath)
 
-            # load the image
-            #####Local file
-            # image = face_recognition.load_image_file(filepath)
-            ######Cluod file
-            image = face_recognition.load_image_file(filepath.download_as_bytes())
-            # found the patches of the face
-            face_locations = face_recognition.face_locations(image,
-                                                             model=model)
-            # encode the face
-            face_encodings = face_recognition.face_encodings(image,
-                                                             face_locations)
+        # load the image
+        #####Local file
+        # image = face_recognition.load_image_file(filepath)
+        ######Cluod file
+        image = face_recognition.load_image_file(BytesIO(filepath.download_as_bytes()))
+        # found the patches of the face
+        face_locations = face_recognition.face_locations(image,
+                                                         model=model)
+        # encode the face
+        face_encodings = face_recognition.face_encodings(image,
+                                                         face_locations)
 
-            for encoding in face_encodings:
-                names.append(self.validation_path)
-                encodings.append(encoding)
+        for encoding in face_encodings:
+            names.append(self.validation_path)
+            encodings.append(encoding)
 
         # save the encodings
         self.name_encodings = {"names": names, "encodings": encodings}
@@ -208,8 +211,10 @@ class FaceRecognition():
                 bucket = client.bucket('face_db')
                 blobs = bucket.list_blobs(prefix="training/")
                 for filepath in blobs:
+                    if filepath.name == "training/":
+                        continue
                 # for filepath in Path("face-recognizer/training").rglob("*.png"):
-                    self.checkListWrite.append(filepath.name.split(" .")[0])
+                    self.checkListWrite.append(filepath.name.split(" .")[0].split("/")[1])
                 
                 # sort the lists alphabetically
                 self.checkListRead.sort()
