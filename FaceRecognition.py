@@ -126,13 +126,14 @@ class FaceRecognition():
             image_location (str): _description_
             model (str, optional): _description_. Defaults to "cnn".
         """
-
+        print("Recognizing faces...", '\n')
         # set the encodings location
         encodings_location = self.DEFAULT_ENCODINGS_PATH.joinpath(
             'encodings.pkl')
         with encodings_location.open(mode="rb") as f:
             loaded_encodings = pickle.load(f)
 
+        print("Loading the image...")
         self.input_image = face_recognition.load_image_file(self.input_image)
 
         # find the faces in the image file
@@ -142,13 +143,14 @@ class FaceRecognition():
         # find the encodings of the faces
         input_face_encodings = face_recognition.face_encodings(
             self.input_image, input_face_locations
-        )
+        ) 
 
         # generate the pillow image
         pillow_image = Image.fromarray(self.input_image)
         # create the draw object
         draw = ImageDraw.Draw(pillow_image)
-
+        
+        print("Recognizing faces...")
         for bounding_box, unknown_encoding in zip(
                 input_face_locations, input_face_encodings):
             name = self._recognize_face(unknown_encoding, loaded_encodings)
@@ -162,6 +164,8 @@ class FaceRecognition():
         del draw
         # show the image
         pillow_image.show()
+        
+        print("Recognition completed!")
 
     def validate(self, model: str = "hog"):
         for filepath in Path("face_recognizer/validation").rglob("*"):
@@ -171,7 +175,7 @@ class FaceRecognition():
 
     def backup_images_encoded(self, names):
         # look at all images in the training folder and put em in a list
-        with open("face-recognizer/validation.txt", "w") as f:
+        with open("face-recognizer/check_encoded.txt", "w") as f:
             for name in names:
                 f.write(name+'-')
         print("Backup completed")
@@ -179,7 +183,7 @@ class FaceRecognition():
     def check_backup_encoded(self):
         print("Checking backup...")
         try:
-            with open("face-recognizer/validation.txt", "r") as f:
+            with open("face-recognizer/check_encoded.txt", "r") as f:
                 
                 # put everything in a list
                 self.checkListRead = list()
