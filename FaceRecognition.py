@@ -75,6 +75,7 @@ class FaceRecognition():
 
         # save the encodings
         self.name_encodings = {"names": names, "encodings": encodings}
+        print(encodings_location)
         with encodings_location.open("wb") as f:
             pickle.dump(self.name_encodings, f)
 
