@@ -3,6 +3,7 @@ import face_recognition
 import pickle
 from collections import Counter
 from PIL import Image, ImageDraw
+from google.cloud import storage
 
 
 class FaceRecognition():
@@ -51,9 +52,14 @@ class FaceRecognition():
         encodings = []
         encodings_location = self.DEFAULT_ENCODINGS_PATH.joinpath(
             'encodings.pkl')
+        ######Cluod file
+        client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+        bucket = client.bucket('face_db')
+        blobs = bucket.list_blobs(prefix="training/")
+        for filepath in blobs:
 
-        # look after all pngs in training folder with glob
-        for filepath in Path("face-recognizer/training").rglob("*.png"):
+        #####Local file
+        # for filepath in Path("face-recognizer/training").rglob("*.png"):
             self.validation_path = filepath.name.split(" .")[0]
             # print the path
             print("Encoding: ", self.validation_path)
@@ -61,7 +67,10 @@ class FaceRecognition():
             self.validation_images.append(filepath)
 
             # load the image
-            image = face_recognition.load_image_file(filepath)
+            #####Local file
+            # image = face_recognition.load_image_file(filepath)
+            ######Cluod file
+            image = face_recognition.load_image_file(filepath.download_as_bytes())
             # found the patches of the face
             face_locations = face_recognition.face_locations(image,
                                                              model=model)
@@ -195,7 +204,11 @@ class FaceRecognition():
                 
                 # self.checkListWrite is the list of images in the training folder
                 self.checkListWrite = list()
-                for filepath in Path("face-recognizer/training").rglob("*.png"):
+                client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+                bucket = client.bucket('face_db')
+                blobs = bucket.list_blobs(prefix="training/")
+                for filepath in blobs:
+                # for filepath in Path("face-recognizer/training").rglob("*.png"):
                     self.checkListWrite.append(filepath.name.split(" .")[0])
                 
                 # sort the lists alphabetically
