@@ -15,7 +15,7 @@ class FaceRecognition():
             - Initialize the class with the default values
             - Check if the folders exist, if not create them
         """
-        
+
         # super variabiles
         self.DEFAULT_ENCODINGS_PATH = Path("face-recognizer\output")
         self.BOUNDING_BOX_COLOR = (0, 0, 255)  # blue
@@ -75,9 +75,15 @@ class FaceRecognition():
 
         # save the encodings
         self.name_encodings = {"names": names, "encodings": encodings}
-        print(encodings_location)
+        print("Saving encodings to disk...")
         with encodings_location.open("wb") as f:
             pickle.dump(self.name_encodings, f)
+
+        # save the list of images
+        print("Saving encodings list")
+        self.backup_images_encoded(names)
+
+        print("Encoding completed!")
 
     # private recognition function
     def _recognize_face(self, unknown_encoding, loaded_encodings):
@@ -163,30 +169,42 @@ class FaceRecognition():
                 self.recognize_faces(image_location=str(filepath.absolute()),
                                      model=model)
 
-    def backup_images_encoded(self):
+    def backup_images_encoded(self, names):
         # look at all images in the training folder and put em in a list
-        for filepath in Path("face-recognizer/training").rglob("*.png"):
-            encode_path = filepath.name.split(" .")[0]
-            self.checkListWrite.append(encode_path)
-        # export in a txt, but then in the bucked
         with open("face-recognizer/validation.txt", "w") as f:
-            for item in self.validation_images:
-                f.write("%s\n" % item)
+            for name in names:
+                f.write(name+'-')
+        print("Backup completed")
 
     def check_backup_encoded(self):
+        print("Checking backup...")
         try:
             with open("face-recognizer/validation.txt", "r") as f:
+                
                 # put everything in a list
                 self.checkListRead = list()
                 for line in f:
-                    self.checkListRead.append(line)
-                # if checkListRead is the same as checkListWrite, then everything is ok
+                    names=line.split('-')
+                    for name in names:
+                        if name != '':
+                            self.checkListRead.append(name)
+                
+                # self.checkListWrite is the list of images in the training folder
+                self.checkListWrite = list()
+                for filepath in Path("face-recognizer/training").rglob("*.png"):
+                    self.checkListWrite.append(filepath.name.split(" .")[0])
+                
+                # sort the lists alphabetically
+                self.checkListRead.sort()
+                self.checkListWrite.sort()
+                
+                # if checkListRead has the same elements as checkListWrite, then everything is ok
                 if self.checkListRead == self.checkListWrite:
-                    print("No need to encode again")
+                    print("Backup checked - Encode not needed")
                 else:
-                    print("Need to encode again")
+                    print("Backup checked - Encode needed")
                     self.encode_known_faces()
         except:
-            print("Need to encode again")
+            print("No backup file found")
+            print("Backup checked - Encode needed")
             self.encode_known_faces()
-            self.backup_images_encoded()

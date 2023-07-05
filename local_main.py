@@ -2,6 +2,8 @@ from FaceRecognition import FaceRecognition
 
 frec = FaceRecognition()
 
-frec.set_parameters("Prova.png")
-# frec.encode_known_faces()
+fname="Prova.png"
+frec.set_parameters(fname)
+# encode only if necessary
+frec.check_backup_encoded()
 frec.recognize_faces()
