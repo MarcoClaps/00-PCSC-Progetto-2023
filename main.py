@@ -1,5 +1,7 @@
 import json
 from datetime import datetime
+from io import BytesIO
+
 from flask import Flask, request, redirect, url_for, render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from secret import secret_key
@@ -174,14 +176,16 @@ def upload():
         # then save the image in the bucket of the doorbell
         # TODO: find a better way to save the new image
         # source_file_name = fname
-        source_file_name = fname + '<->' + recognition_result[0]
+        source_file_name = fname.split(".")[0] + '<->' + recognition_result[0]
         destination_blob_name = source_file_name
         blob = bucket.blob(destination_blob_name)
-
+        result_file = recognition_result[1]
+        bs = BytesIO()
+        result_file.save(bs, 'png')
         # TODO: ora salvo l'immagine con il nome dell'utente riconosciuto, però l'immagine resta la stessa.
         # Sarebbe meglio usare l'immagine con il volto messo nel riquadro e il nome
-        # blob.upload_from_string(recognition_result[1].read(), content_type=file.content_type)
-        blob.upload_from_string(file.read(), content_type=file.content_type)
+        
+        blob.upload_from_string(bs.getvalue(), content_type="image/png")
 
         if recognition_result == 'Sconosciuto':
             return 'Utente non riconosciuto'
