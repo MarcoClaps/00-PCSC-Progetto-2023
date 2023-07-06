@@ -50,9 +50,9 @@ def login():
     user = db.collection('user_db').document(username).get()
     if user.exists and user.to_dict()['password'] == password:
         login_user(User(username))
-        next_page = request.args.get('next')
+        next_page = request.values['next']
         if not next_page:
-            next_page = '/main'
+            next_page = '/dashboard'
         return redirect(next_page)
     return redirect('/static/login.html')
 
@@ -174,7 +174,6 @@ def upload():
         # first delete the image from the bucket of the doorbell
         blob.delete()
         # then save the image in the bucket of the doorbell
-        # TODO: find a better way to save the new image
         # source_file_name = fname
         source_file_name = fname.split(".")[0] + '<->' + recognition_result[0]
         destination_blob_name = source_file_name
@@ -182,9 +181,8 @@ def upload():
         result_file = recognition_result[1]
         bs = BytesIO()
         result_file.save(bs, 'png')
-        # TODO: ora salvo l'immagine con il nome dell'utente riconosciuto, però l'immagine resta la stessa.
         # Sarebbe meglio usare l'immagine con il volto messo nel riquadro e il nome
-        
+
         blob.upload_from_string(bs.getvalue(), content_type="image/png")
 
         if recognition_result == 'Sconosciuto':
