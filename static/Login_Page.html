@@ -1,73 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<link rel="stylesheet" href="static/src/css/Login_Page.css" type="text/css">
 <head>
-  <title>Login_Page</title>
-  <style>
-    .container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-    .left-section {
-      width: 50%;
-    }
-    .right-section {
-      width: 50%;
-      text-align: center;
-    }
-    #menu-container {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 9999;
-    }
-  </style>
-  <script>
-    function navigate() {
-      var selectedOption = document.getElementById("menu").value;
-      if (selectedOption === "Gestione_Permessi") {
-        window.location.href = "Gestione_Permessi.html";
-      } else if (selectedOption === "Landing_Page") {
-        window.location.href = "Landing_Page.html";
-      }
-    }
-  </script>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
 </head>
+
 <body>
-    <!--Sezione menu a tendina-->
-  <div id="menu-container">
-    
-    <select id="menu" onchange="navigate()">
-      <option value="">Seleziona una sezione</option>
-      <option value="Gestione_Permessi">Gestione_Permessi</option>
-      <option value="Landing_Page">Landing_Page</option>
-    </select>
-  </div>
-  <!-- Sezione centrale-->
-  <div class="container">
-    <div class="left-section">
-      <form>
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome"><br><br>
+    <h1 style="text-align: center;">Login Page</h1>
 
-        <label for="cognome">Cognome:</label>
-        <input type="text" id="cognome" name="cognome"><br><br>
-
-        <label for="data">Data Ultimo Accesso:</label>
-        <input type="date" id="data" name="data"><br><br>
-
-      </form>
+    <div class="dropdown">
+        <button>&#9776;</button>
+        <div class="dropdown-content">
+            <a href="Gestione_Permessi.html">Permessi</a>
+            <a href="Landing_Page.html">Landing</a>
+        </div>
     </div>
-    <div class="right-section">
-      <img src="percorso_immagine" alt="Immagine">
+    <br><br><br><br><br><br><br><br><br>
+
+    <!-- Sezione centrale-->
+    <div class="container">
+        <div class="left-section">
+            <form>
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome"><br><br>
+
+                <label for="cognome">Cognome:</label>
+                <input type="text" id="cognome" name="cognome"><br><br>
+
+                <label for="data">Data Ultimo Accesso:</label>
+                <input type="date" id="data" name="data"><br><br>
+
+            </form>
+        </div>
+        <div class="right-section">
+            <img src="Percorso_immagine">
+        </div>
     </div>
-  </div>
-  
-  <a href="Gestione_Permessi.html" id="Gestione_Permessi">Gestione_permessi</a>
-  <!-- Contenuto della Sezione 1 -->
-  
-  <a href="Landing_Page.html" id="Landing_Page">Landing_Page</a>
-  <!-- Contenuto della Sezione 2 -->
 </body>
 </html>
