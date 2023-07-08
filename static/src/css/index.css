@@ -71,12 +71,18 @@ img{
   z-index: 2;
 }
 
-.ccontent-img #img {
+
+/* create a class that holds two images, on two different levels */
+.ccontent-img .img1 {
     position: absolute;
-    top: 102px; /* Regola il valore in base alla posizione desiderata */
-    left: 470px;
-    width: 45%;
-    height: 62%;
-    background: black;
-    z-index: -1;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+}
+/* second image */
+.ccontent-img .img2 {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
 }
