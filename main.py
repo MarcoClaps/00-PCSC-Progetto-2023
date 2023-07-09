@@ -86,12 +86,10 @@ def load_dashboard():
     files = list_bucket_files()
 
     # print files to console
-    print(files)
+    # print(files)
 
-    # TODO: put the files in a html tag called "output"
-    # return render_template('dashboard.html', output=files)
-
-    return redirect(url_for('static', filename='dashboard.html'))
+    return render_template('dashboard.html', listaFoto=files)
+    # return redirect(url_for('static', filename='dashboard.html'))
 
 
 @app.route('/dashboard/gest_perm', methods=['GET'])
@@ -123,20 +121,27 @@ def add_perm():
         blob = bucket.blob('Permessi.json')
         perm = json.load(BytesIO(blob.download_as_string()))
         keys = list(perm.keys())
+        # prendo i dati dal form
         nome = request.form['nome']
         cognome = request.form['cognome']
         n_c = nome + "__" + cognome
         image = request.files.get('image')
+        # identificativo prende il nome e le prime 3 lettere del cognome
         identificativo = nome + '_' + cognome.strip()[:3]
+        # se ci sono più persone con lo stesso nome e cognome aggiungo un numero
         if identificativo in keys:
             identificativo = identificativo + "_" + str(len(cognome))
         while identificativo in keys:
             identificativo = identificativo[:-1] + str(int(identificativo.split("_")[2]) + 1)
+        # se tutti i campi sono stati riempiti
         if nome and image and cognome:
             perm[identificativo] = n_c
             blob.upload_from_string(json.dumps(perm))
             blob = bucket.blob('training/' + identificativo + '.png')
             blob.upload_from_string(image.read(), content_type=image.content_type)
+            # inizia il processo di encoding del nuovo set di volti
+            frec=FaceRecognition()
+            frec.encode_known_faces()
             return "saved"
         else:
             return "error"
@@ -152,28 +157,31 @@ def delete(p):
     blob = bucket.blob('Permessi.json')
     perm = json.load(BytesIO(blob.download_as_string()))
     print(perm)
+    # cancella la persona dal json
     del perm[p]
+    # ricarica il json
     blob.upload_from_string(json.dumps(perm))
+    # elimina la foto dal training folder per l'encoding
     blob = bucket.blob('training/' + p + '.png')
     blob.delete()
     return "deleted"
 
 
-@app.route('/upload_data_buffer', methods=['POST'])
-def upload_data_buffer():
-    # print(request.form)
-    print(json.loads(request.values['data']))
-    return 'saved'
+# @app.route('/upload_data_buffer', methods=['POST'])
+# def upload_data_buffer():
+#     # print(request.form)
+#     print(json.loads(request.values['data']))
+#     return 'saved'
 
 
-@app.route('/upload_data', methods=['POST'])
-def upload_data():
-    i = request.form.get("i")
-    j = request.form.get("j")
-    k = request.form.get("k")
-    print(i, j, k)
+# @app.route('/upload_data', methods=['POST'])
+# def upload_data():
+#     i = request.form.get("i")
+#     j = request.form.get("j")
+#     k = request.form.get("k")
+#     print(i, j, k)
 
-    return 'saved'
+#     return 'saved'
 
 
 @app.route('/upload', methods=['POST'])
@@ -201,8 +209,6 @@ def upload():
 
         # Face recognition
         frec.set_parameters(fname)
-        # encode only if necessary
-        frec.check_backup_encoded()
         # recognition_results should have only one element
         recognition_result = frec.recognize_faces()
 
@@ -214,6 +220,7 @@ def upload():
         destination_blob_name = source_file_name
         blob = bucket.blob(destination_blob_name)
         result_file = recognition_result[1]
+        # Buffer to gather the image
         bs = BytesIO()
         result_file.save(bs, 'png')
         # Sarebbe meglio usare l'immagine con il volto messo nel riquadro e il nome

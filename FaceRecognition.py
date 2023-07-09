@@ -240,49 +240,49 @@ class FaceRecognition():
                                      model=model)
 
     def backup_images_encoded(self, names):
-        # look at all images in the training folder and put em in a list
-        with open("face-recognizer/check_encoded.txt", "w") as f:
-            for name in names:
-                f.write(name+'-')
+        # # look at all images in the training folder and put em in a list
+        # with open("face-recognizer/check_encoded.txt", "w") as f:
+        #     for name in names:
+        #         f.write(name+'-')
         print("Backup completed")
 
-    def check_backup_encoded(self):
-        print("Checking backup...")
-        try:
-            with open("face-recognizer/check_encoded.txt", "r") as f:
+    # def check_backup_encoded(self):
+    #     print("Checking backup...")
+    #     try:
+    #         with open("face-recognizer/check_encoded.txt", "r") as f:
 
-                # put everything in a list
-                self.checkListRead = list()
-                for line in f:
-                    names = line.split('-')
-                    for name in names:
-                        if name != '':
-                            self.checkListRead.append(name)
+    #             # put everything in a list
+    #             self.checkListRead = list()
+    #             for line in f:
+    #                 names = line.split('-')
+    #                 for name in names:
+    #                     if name != '':
+    #                         self.checkListRead.append(name)
 
-                # self.checkListWrite is the list of images in the training folder
-                self.checkListWrite = list()
-                client = storage.Client.from_service_account_json(
-                    'facerecognition2023-84f934357826.json')
-                bucket = client.bucket('face_db')
-                blobs = bucket.list_blobs(prefix="training/")
-                for filepath in blobs:
-                    if filepath.name == "training/":
-                        continue
-                # for filepath in Path("face-recognizer/training").rglob("*.png"):
-                    self.checkListWrite.append(
-                        filepath.name.split(" .")[0].split("/")[1])
+    #             # self.checkListWrite is the list of images in the training folder
+    #             self.checkListWrite = list()
+    #             client = storage.Client.from_service_account_json(
+    #                 'facerecognition2023-84f934357826.json')
+    #             bucket = client.bucket('face_db')
+    #             blobs = bucket.list_blobs(prefix="training/")
+    #             for filepath in blobs:
+    #                 if filepath.name == "training/":
+    #                     continue
+    #             # for filepath in Path("face-recognizer/training").rglob("*.png"):
+    #                 self.checkListWrite.append(
+    #                     filepath.name.split(" .")[0].split("/")[1])
 
-                # sort the lists alphabetically
-                self.checkListRead.sort()
-                self.checkListWrite.sort()
+    #             # sort the lists alphabetically
+    #             self.checkListRead.sort()
+    #             self.checkListWrite.sort()
 
-                # if checkListRead has the same elements as checkListWrite, then everything is ok
-                if self.checkListRead == self.checkListWrite:
-                    print("Backup checked - Encode not needed")
-                else:
-                    print("Backup checked - Encode needed")
-                    self.encode_known_faces()
-        except:
-            print("No backup file found")
-            print("Backup checked - Encode needed")
-            self.encode_known_faces()
+    #             # if checkListRead has the same elements as checkListWrite, then everything is ok
+    #             if self.checkListRead == self.checkListWrite:
+    #                 print("Backup checked - Encode not needed")
+    #             else:
+    #                 print("Backup checked - Encode needed")
+    #                 self.encode_known_faces()
+    #     except:
+    #         print("No backup file found")
+    #         print("Backup checked - Encode needed")
+    #         self.encode_known_faces()
