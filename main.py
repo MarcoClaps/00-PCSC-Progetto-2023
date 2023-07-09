@@ -124,10 +124,10 @@ def add_perm():
         # prendo i dati dal form
         nome = request.form['nome']
         cognome = request.form['cognome']
-        n_c = nome + "__" + cognome
+        n_c = nome + "__" + cognome.replace(" ", "_")
         image = request.files.get('image')
-        # identificativo prende il nome e le prime 3 lettere del cognome
-        identificativo = nome + '_' + cognome.strip()[:3]
+        # identificativo prende il nome e le prime TRE lettere del cognome
+        identificativo = nome + '_' + cognome.replace(" ", "")[:3]
         # se ci sono più persone con lo stesso nome e cognome aggiungo un numero
         if identificativo in keys:
             identificativo = identificativo + "_" + str(len(cognome))
@@ -140,7 +140,7 @@ def add_perm():
             blob = bucket.blob('training/' + identificativo + '.png')
             blob.upload_from_string(image.read(), content_type=image.content_type)
             # inizia il processo di encoding del nuovo set di volti
-            frec=FaceRecognition()
+            frec = FaceRecognition()
             frec.encode_known_faces()
             return "saved"
         else:
@@ -216,16 +216,12 @@ def upload():
         blob.delete()
         # then save the image in the bucket of the doorbell
         # source_file_name = fname
+
         source_file_name = fname.split(".")[0] + '<->' + recognition_result[0]
         destination_blob_name = source_file_name
         blob = bucket.blob(destination_blob_name)
         result_file = recognition_result[1]
-        # Buffer to gather the image
-        bs = BytesIO()
-        result_file.save(bs, 'png')
-        # Sarebbe meglio usare l'immagine con il volto messo nel riquadro e il nome
-
-        blob.upload_from_string(bs.getvalue(), content_type="image/png")
+        blob.upload_from_string(result_file, content_type="image/png")
 
         if recognition_result == 'Sconosciuto':
             return 'Utente non riconosciuto'

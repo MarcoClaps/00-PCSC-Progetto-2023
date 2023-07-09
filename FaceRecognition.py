@@ -25,7 +25,7 @@ class FaceRecognition():
         self.TEXT_COLOR = (255, 255, 255)  # white
 
         # input variabiles
-        self.image_filepath= None
+        self.image_filepath = None
         self.input_image = None
         self.validation_path = None
         self.validation_images = list()
@@ -38,7 +38,7 @@ class FaceRecognition():
 
         # results
         self.recongition_result = list()
-        
+
         # Cloud variables
         self.cs_client = storage.Client.from_service_account_json(
             'facerecognition2023-84f934357826.json')
@@ -63,13 +63,13 @@ class FaceRecognition():
         encodings = []
         encodings_location = self.DEFAULT_ENCODINGS_PATH.joinpath('encodings.pkl')
         # Cloud file
-        bucket = self.cs_client .bucket('face_db')
+        bucket = self.cs_client.bucket('face_db')
         blobs = bucket.list_blobs(prefix="training/")
         for filepath in blobs:
             if filepath.name == "training/":
                 continue
-            
-            print("Filepath: ",filepath)
+
+            print("Filepath: ", filepath)
             self.validation_path = filepath.name.split(" .")[0].split("/")[1]
             # print the path
             print("Encoding: ", self.validation_path)
@@ -85,10 +85,10 @@ class FaceRecognition():
             print("image: ", image)
             # found the patches of the face
             face_locations = face_recognition.face_locations(image,
-                                                            model=model)
+                                                             model=model)
             # encode the face
             face_encodings = face_recognition.face_encodings(image,
-                                                            face_locations)
+                                                             face_locations)
 
             for encoding in face_encodings:
                 names.append(self.validation_path)
@@ -174,7 +174,7 @@ class FaceRecognition():
             loaded_encodings = pickle.load(f)
 
         print("Loading the image...")
-        
+
         # Cloud file
         bucket = self.cs_client.bucket('door_bell')
         # load only the last image
@@ -191,8 +191,8 @@ class FaceRecognition():
         # Cloud file
         # download the image from the cloud so that's readable by face_recognition
         self.input_image = face_recognition.load_image_file(
-                BytesIO(filepath.download_as_bytes()))
-        
+            BytesIO(filepath.download_as_bytes()))
+
         print("Immagine trovata. Inizio riconoscimento... ")
         # find the faces in the image file
         input_face_locations = face_recognition.face_locations(
@@ -221,16 +221,21 @@ class FaceRecognition():
 
             # set the bounding box and the name
             self._display_face(draw, bounding_box, name)
-
+        print("Volto non trovato")
+        if not self.recongition_result:
+            self.recongition_result.append("Volto_non_trovato")
         # delete the draw object
         del draw
         # show the image
         pillow_image.show()
         # convert the image to png without saving locally
         pillow_image = pillow_image.convert("RGB")
-        self.recongition_result.append(pillow_image)
+        # Buffer to gather the image
+        bs = BytesIO()
+        pillow_image.save(bs, 'png')
+        self.recongition_result.append(bs.getvalue())
         print("Recognition ended!")
-        
+
         return self.recongition_result
 
     def validate(self, model: str = "hog"):
