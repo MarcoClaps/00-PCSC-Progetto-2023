@@ -1,41 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<link rel="stylesheet" href="static/src/css/Login_Page.css" type="text/css">
-<head>
-    <meta charset="UTF-8">
-    <title>Login Page</title>
-</head>
+<html>
+    <head>
+        <title>DoorBell Login Page</title>
+        <link rel="stylesheet" type="text/css" href="src\css\Login_Page.css">
+    </head>
+        <body>
+            <div class="login-box">
+                <img src="src\img\avatar.svg" class="avatar">
+                    <h1>Login Here</h1>
+                        <form>
+                            <p>Username</p>
+                            <input type="text" name="username" placeholder="Enter Username">
+                            <p>Password</p>
+                            <input type="password" name="password" placeholder="Enter Password">
+                            <input type="submit" name="submit" value="Login">
+                            <a href="#">Forget password</a>
+                            
+                        </form>
 
-<body>
-    <h1 style="text-align: center;">Login Page</h1>
 
-    <div class="dropdown">
-        <button>&#9776;</button>
-        <div class="dropdown-content">
-            <a href="Gestione_Permessi.html">Permessi</a>
-            <a href="Landing_Page.html">Landing</a>
-        </div>
-    </div>
-    <br><br><br><br><br><br><br><br><br>
+            </div>
+        </body>
 
-    <!-- Sezione centrale-->
-    <div class="container">
-        <div class="left-section">
-            <form>
-                <label for="nome">Nome:</label>
-                <input type="text" id="nome" name="nome"><br><br>
-
-                <label for="cognome">Cognome:</label>
-                <input type="text" id="cognome" name="cognome"><br><br>
-
-                <label for="data">Data Ultimo Accesso:</label>
-                <input type="date" id="data" name="data"><br><br>
-
-            </form>
-        </div>
-        <div class="right-section">
-            <img src="Percorso_immagine">
-        </div>
-    </div>
-</body>
 </html>
