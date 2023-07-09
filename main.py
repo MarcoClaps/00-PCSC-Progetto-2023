@@ -14,20 +14,6 @@ from User import User
 
 # requires pyopenssl
 
-def list_bucket_files():
-    # Create a GCS client
-    client = storage.Client.from_service_account_json(
-            'facerecognition2023-84f934357826.json')
-    bucket_name = 'door_bell'
-
-    # Retrieve the bucket
-    bucket = client.get_bucket(bucket_name)
-
-    # List the files in the bucket
-    files = [blob.name for blob in bucket.list_blobs()]
-
-    return files
-
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
@@ -78,18 +64,33 @@ def main():
     return render_template('index.html')
 
 
+def list_bucket_files():
+    # Create a GCS client
+    client = storage.Client.from_service_account_json(
+        'facerecognition2023-84f934357826.json')
+    bucket_name = 'door_bell'
+
+    # Retrieve the bucket
+    bucket = client.get_bucket(bucket_name)
+
+    # List the files in the bucket
+    files = [blob.name for blob in bucket.list_blobs()]
+
+    return files
+
+
 @app.route('/dashboard', methods=['GET'])
 @login_required
 def load_dashboard():
     # Call the function to fetch the list of files from the GCS bucket
     files = list_bucket_files()
-    
+
     # print files to console
     print(files)
-    
+
     # TODO: put the files in a html tag called "output"
     # return render_template('dashboard.html', output=files)
-    
+
     return redirect(url_for('static', filename='dashboard.html'))
 
 
@@ -99,17 +100,11 @@ def gest_perm():
     client = storage.Client.from_service_account_json(
         'facerecognition2023-84f934357826.json')
     bucket = client.bucket('face_db')
-    blobs = bucket.list_blobs(prefix="training/")
+    blob = bucket.blob('Permessi.json')
 
-    files = []
-    for blob in blobs:
-        if '.' in blob.name:
-            files.append(blob.name)
-    names = set([file.split('_')[0].split('/')[1] for file in files])
+    perm = json.load(BytesIO(blob.download_as_string()))
 
-    print(files)
-
-    return render_template('gest_perm_tmp.html', names=names, files=files)
+    return render_template('gest_perm_tmp.html', perm=perm)
 
 
 # per ora l'ho fatto così ma possimo valutare di farlo in un altro modo ad esempio come un pop up
@@ -124,27 +119,44 @@ def add_perm():
     else:
         client = storage.Client.from_service_account_json(
             'facerecognition2023-84f934357826.json')
-        bucket_name = 'face_db'
-        directory_name = 'training/'
-        # nel text dovrà essere presente l'id univoco che rappresenta ogni persona
-        # TODO: aggiungere un controllo per verificare che l'id sia univoco e che non sia già presente nel db
-        text = request.form['text']
-        files = request.files.getlist('image')
-        print(text, files)
-
-        if text and files:
-            bucket = client.bucket(bucket_name)
-            for file in files:
-                if file:
-                    blob = bucket.blob(
-                        directory_name + text + '_' + file.filename)
-                    blob.upload_from_string(
-                        file.read(),
-                        content_type=file.content_type
-                    )
-            return 'Data uploaded successfully'
+        bucket = client.bucket('face_db')
+        blob = bucket.blob('Permessi.json')
+        perm = json.load(BytesIO(blob.download_as_string()))
+        keys = list(perm.keys())
+        nome = request.form['nome']
+        cognome = request.form['cognome']
+        n_c = nome + "__" + cognome
+        image = request.files.get('image')
+        identificativo = nome + '_' + cognome.strip()[:3]
+        if identificativo in keys:
+            identificativo = identificativo + "_" + str(len(cognome))
+        while identificativo in keys:
+            identificativo = identificativo[:-1] + str(int(identificativo.split("_")[2]) + 1)
+        if nome and image and cognome:
+            perm[identificativo] = n_c
+            blob.upload_from_string(json.dumps(perm))
+            blob = bucket.blob('training/' + identificativo + '.png')
+            blob.upload_from_string(image.read(), content_type=image.content_type)
+            return "saved"
         else:
-            return 'No data selected'
+            return "error"
+
+
+@app.route('/dashboard/gest_perm/delete/<p>', methods=['POST'])
+@login_required
+def delete(p):
+    print(p)
+    client = storage.Client.from_service_account_json(
+        'facerecognition2023-84f934357826.json')
+    bucket = client.bucket('face_db')
+    blob = bucket.blob('Permessi.json')
+    perm = json.load(BytesIO(blob.download_as_string()))
+    print(perm)
+    del perm[p]
+    blob.upload_from_string(json.dumps(perm))
+    blob = bucket.blob('training/' + p + '.png')
+    blob.delete()
+    return "deleted"
 
 
 @app.route('/upload_data_buffer', methods=['POST'])
@@ -222,4 +234,3 @@ def logout():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
-#     , ssl_context='adhoc' canceellato perche non funzionava
