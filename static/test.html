@@ -1,23 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Popup di conferma</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-      function initSensor() {
-           url = 'https://europe-west1-jssensors.cloudfunctions.net/save_data'
-           dati = {'time':'21-5-2022 14:39:31','value':[45,45]}
-           $.post(url,dati,
-                function(data,status){
-                    console.log('ok')
-                })
-      }
+        $(document).ready(function () {
+            // Aggiungi un gestore di eventi al pulsante
+            $('#exit-button').click(function () {
+                // Mostra la finestra popup di conferma
+                if (confirm('Sei sicuro di voler uscire?')) {
+                    // Se l'utente ha cliccato su "OK", esegui il codice qui
+                    console.log('L\'utente ha cliccato su OK');
+                    // Esempio: reindirizza l'utente a una nuova pagina
+                    window.location.href = 'https://www.example.com';
+                } else {
+                    // Se l'utente ha cliccato su "Annulla", esegui il codice qui
+                    console.log('L\'utente ha cliccato su Annulla');
+                }
+            });
+        });
     </script>
-test.html
 </head>
 <body>
-<button onclick="initSensor()">Start</button>
-<div id="output"></div>
+    <button id="exit-button">Uscita</button>
 </body>
 </html>
