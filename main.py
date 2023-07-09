@@ -14,6 +14,20 @@ from User import User
 
 # requires pyopenssl
 
+def list_bucket_files():
+    # Create a GCS client
+    client = storage.Client.from_service_account_json(
+            'facerecognition2023-84f934357826.json')
+    bucket_name = 'door_bell'
+
+    # Retrieve the bucket
+    bucket = client.get_bucket(bucket_name)
+
+    # List the files in the bucket
+    files = [blob.name for blob in bucket.list_blobs()]
+
+    return files
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
@@ -67,6 +81,15 @@ def main():
 @app.route('/dashboard', methods=['GET'])
 @login_required
 def load_dashboard():
+    # Call the function to fetch the list of files from the GCS bucket
+    files = list_bucket_files()
+    
+    # print files to console
+    print(files)
+    
+    # TODO: put the files in a html tag called "output"
+    # return render_template('dashboard.html', output=files)
+    
     return redirect(url_for('static', filename='dashboard.html'))
 
 

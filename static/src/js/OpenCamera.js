@@ -42,7 +42,7 @@ function openCamera() {
                 context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
                 const imageData = canvasElement.toDataURL('image/png');
 
-                img = document.getElementById("img");
+                img = document.getElementById("camera");
                 img.src = imageData;
 
                 var fd = new FormData();

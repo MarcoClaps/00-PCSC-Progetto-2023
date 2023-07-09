@@ -1,47 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <link rel="stylesheet" href="static/src/css/index.css" type="text/css">
+
 <head>
     <meta charset="UTF-8">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="static/src/js/OpenCamera.js"></script>
     <title>{{ data }}Door Bell</title>
 </head>
+
 <body>
-<!--
+    <!--
 <a href="geolocation.html">geolocation</a><br>
 <a href="test.html">test function</a><br>
 -->
-<div class="topnav ">
-    <p>Intro</p>
-</div>
+<header>
+    <div class="topnav">
+         <a href="http://127.0.0.1:80">
+            <img id="logo" src="static/src/img/logo.png" >
+         </a>
+    </div>
+</header>
 
 <div class="content-img">
-    <img id="img">
+    <img id="camera">
+    <img id="cornice" src="static/src/img/cornice.png">
 </div>
 
-<div class="content-button">
-    <button type="button" onclick="openCamera()">DRIIIIIN</button>
-</div>
+    <div class="content-button">
+        <button type="button" onclick="openCamera()">DRIIIIIN</button>
+    </div>
 
-<div class="content-button">
-    <a href="/dashboard">
-        <button type="button">admin dashboard</button>
-    </a>
-</div>
+    <div class="content-button">
+        <a href="/dashboard">
+            <button type="button">admin dashboard</button>
+        </a>
+    </div>
 
-<div id="result" class="result" onclick="result()">
-    <p>Result</p>
-</div>
+    <div id="result" class="result" onclick="result()">
+        <p>Result</p>
+    </div>
 
+<!--
 <div class="ccontent-img">
     <div class="main-image">
-        <img id="img" src="static\src\img\ipadpro2018.jpg" alt="Image">
+        <img id="img" src="static\src\img\ipadpro2018.jpg" alt="image">
     </div>
 </div>
-
+--->
 
 </body>
+
 </html>
 
 <script>
