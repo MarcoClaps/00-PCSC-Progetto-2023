@@ -1,61 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<link rel="stylesheet" href="static/src/css/index.css" type="text/css">
+<!DOCTYPE HTML>
+<!--
+	Stellar by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.5">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="static/src/js/OpenCamera.js"></script>
-    <title>Door Bell</title>
+	<title>Stellar by HTML5 UP</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="static/src/js/OpenCamera.js"></script>
+	<link rel="stylesheet" href="../static/src/css/main.css" />
+	<noscript>
+		<link rel="stylesheet" href="assets/css/noscript.css" />
+	</noscript>
 </head>
 
-<body>
-    <!--
-<a href="geolocation.html">geolocation</a><br>
-<a href="test.html">test function</a><br>
--->
-<header>
-    <div class="topnav">
-         <a href="http://127.0.0.1:80">
-            <img id="logo" src="static/src/img/logo.png" >
-         </a>
-    </div>
-</header>
+<body class="is-preload">
 
-<div class="content-img">
-    <img id="camera">
-    <img id="cornice" src="static/src/img/cornice.png">
-</div>
+	<div id="wrapper">
 
-    <div class="content-button">
-        <button type="button" onclick="openCamera()">DRIIIIIN</button>
-    </div>
+		<!-- Header -->
+				<img id="logo" src="../static/src/img/logo.png" >
 
-    <div class="content-button">
-        <a href="/dashboard">
-            <button type="button">admin dashboard</button>
-        </a>
-    </div>
+		<!-- Nav
+					<nav id="nav">
+						<ul>
+							<li><a href="#intro" class="active">Introduction</a></li>
+							<li><a href="#first">First Section</a></li>
+							<li><a href="#second">Second Section</a></li>
+							<li><a href="#cta">Get Started</a></li>
+						</ul>
+					</nav> -->
 
-    <div id="result" style="display: none" onclick="result()">
-        <p>Result</p>
-    </div>
+		<!-- Main -->
+			<div class="content-img">
+				<img id="camera">
+				<img id="cornice" src="../static/src/img/cornice.jpg">
+			</div>
+			<br>
+			<br>
+			<br>
+			<div style="text-align: center;">
+				<span  onclick="openCamera()"><img src="../static/src/img/doorbellButton.png" style="width: 25%;height: auto; background: none;" alt=""></span>
+			</div>
 
-<!--
-<div class="ccontent-img">
-    <div class="main-image">
-        <img id="img" src="static\src\img\ipadpro2018.jpg" alt="image">
-    </div>
-</div>
---->
+				<a href="/dashboard">
+					<button type="button">admin dashboard</button>
+
+			<div id="result" style="display: none" onclick="result()">
+				<p>Result</p>
+			</div>
+
+
+		<!-- Scripts -->
+		<script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/jquery.scrollex.min.js"></script>
+		<script src="assets/js/jquery.scrolly.min.js"></script>
+		<script src="assets/js/browser.min.js"></script>
+		<script src="assets/js/breakpoints.min.js"></script>
+		<script src="assets/js/util.js"></script>
+		<script src="assets/js/main.js"></script>
 
 </body>
 
 </html>
-
-<script>
-    function result() {
-        document.getElementById("result").style.display = "block"
-    }
-</script>
