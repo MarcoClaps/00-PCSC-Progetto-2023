@@ -1,0 +1,15 @@
+<html>
+<body>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const nextPage = urlParams.get('next');
+    document.getElementById("next-page").value = nextPage;
+</script>
+<form action="/login" method="post">
+    username <input type="text" name="u"><br>
+    password <input type="password" name="p"><br>
+    <input type="hidden" id="next-page" name="next" value="">
+    <input type="submit">
+</form>
+</body>
+</html>
