@@ -6,3 +6,4 @@ Pillow==9.4.0
 google-cloud-storage
 google-cloud-firestore
 flask-login
+tabulate

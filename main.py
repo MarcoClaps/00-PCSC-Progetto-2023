@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
 from io import BytesIO
+from tabulate import tabulate
+from datetime import datetime, timedelta
 
 from flask import Flask, request, redirect, url_for, render_template
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
@@ -75,20 +77,62 @@ def list_bucket_files():
 
     # List the files in the bucket
     files = [blob.name for blob in bucket.list_blobs()]
+    # list of the links to the files
+    expires = datetime.now() + timedelta(seconds=86400)
+    links = [blob.generate_signed_url(expiration=expires)
+             for blob in bucket.list_blobs()]
 
-    return files
+    return files, links
 
 
 @app.route('/dashboard', methods=['GET'])
 @login_required
 def load_dashboard():
     # Call the function to fetch the list of files from the GCS bucket
-    files = list_bucket_files()
+    files, links = list_bucket_files()
+    filesProcessed = list()
+    for i in range(len(files)):
+        # each foto has a name with '<->' as separator
+        # the first part is the access time, the second is the name of the person
+        foto_split = files[i].split('<->')
+        # convert the access time to a datetime object
+        accessTime = datetime.strptime(foto_split[0], '%Y_%m_%d__%H_%M_%S')
+        # For the name we want to look at permessi.json
+        # Create a GCS client
+        client = storage.Client.from_service_account_json(
+            'facerecognition2023-84f934357826.json')
+        bucket_name = 'face_db'
+        # Retrieve the bucket
+        bucket = client.get_bucket(bucket_name)
+        # in the bucket there is a file called permessi.json
+        blob = bucket.blob('Permessi.json')
+        perm = json.load(BytesIO(blob.download_as_string()))
 
-    # print files to console
-    # print(files)
+        for person in perm.keys():
+            if person == foto_split[1].replace('.png', ''):
+                accessName = perm[person].replace('_', ' ')
+                break
+            else:
+                accessName = foto_split[1].replace('.png', '')
+        filesProcessed.append([accessName, accessTime])
 
-    return render_template('dashboard.html', listaFoto=files)
+    tabulated = tabulate(filesProcessed, tablefmt="html",
+                         headers=["Name","Access Time"])
+    # print(tabulated)
+    # # iterate over the td elements and add the link to the image
+    tabulated_rows = tabulated.split("<tr>")
+    for row in range(2, len(tabulated_rows)):
+        tabulated_cols = tabulated_rows[row].split("<td>")
+        tabulated_cols[1] = f"<a href='{links[row-2]}'>{tabulated_cols[1]}"
+        # rejoin cols
+        tabulated_rows[row] = "<td>".join(tabulated_cols)
+
+    # rejoin rows
+    tabulated = "<tr>".join(tabulated_rows)
+
+    tabulated = tabulated.replace('<table>', '<table id="accessTable">')
+
+    return render_template('dashboard.html', listaFoto=tabulated)
     # return redirect(url_for('static', filename='dashboard.html'))
 
 
@@ -132,13 +176,15 @@ def add_perm():
         if identificativo in keys:
             identificativo = identificativo + "_" + str(len(cognome))
         while identificativo in keys:
-            identificativo = identificativo[:-1] + str(int(identificativo.split("_")[2]) + 1)
+            identificativo = identificativo[:-1] + \
+                str(int(identificativo.split("_")[2]) + 1)
         # se tutti i campi sono stati riempiti
         if nome and image and cognome:
             perm[identificativo] = n_c
             blob.upload_from_string(json.dumps(perm))
             blob = bucket.blob('training/' + identificativo + '.png')
-            blob.upload_from_string(image.read(), content_type=image.content_type)
+            blob.upload_from_string(
+                image.read(), content_type=image.content_type)
             # inizia il processo di encoding del nuovo set di volti
             frec = FaceRecognition()
             frec.encode_known_faces()

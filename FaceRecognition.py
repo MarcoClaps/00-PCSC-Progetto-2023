@@ -37,7 +37,7 @@ class FaceRecognition():
         self.checkListRead = list()
 
         # results
-        self.recongition_result = list()
+        self.recognition_results = list()
 
         # Cloud variables
         self.cs_client = storage.Client.from_service_account_json(
@@ -214,16 +214,16 @@ class FaceRecognition():
             if not name:
                 print("Volto non riconosciuto")
                 name = "Sconoisciuto"
-                self.recongition_result.append("Sconosciuto")
+                self.recognition_results.append("Sconosciuto")
             else:
                 print("Riconosciuto", name)
-                self.recongition_result.append(name)
+                self.recognition_results.append(name)
 
             # set the bounding box and the name
             self._display_face(draw, bounding_box, name)
-        print("Volto non trovato")
-        if not self.recongition_result:
-            self.recongition_result.append("Volto_non_trovato")
+        # print("Volto non trovato")
+        if not self.recognition_results:
+            self.recognition_results.append("Volto_non_trovato")
         # delete the draw object
         del draw
         # show the image
@@ -233,10 +233,10 @@ class FaceRecognition():
         # Buffer to gather the image
         bs = BytesIO()
         pillow_image.save(bs, 'png')
-        self.recongition_result.append(bs.getvalue())
+        self.recognition_results.append(bs.getvalue())
         print("Recognition ended!")
 
-        return self.recongition_result
+        return self.recognition_results
 
     def validate(self, model: str = "hog"):
         for filepath in Path("face_recognizer/validation").rglob("*"):

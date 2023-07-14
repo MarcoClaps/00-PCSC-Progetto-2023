@@ -194,6 +194,10 @@ q:after {
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
+	/* text color */
+	color: #2c2c2c;
+	/* text bold */
+	font-weight: 600;
 }
 
 body {
@@ -2908,10 +2912,17 @@ table tbody tr {
 	border: solid 1px;
 	border-left: 0;
 	border-right: 0;
+	
+
 }
 
 table td {
 	padding: 0.75em 0.75em;
+}
+
+table tbody td:nth-child(2n) {
+	background-color: rgba(255, 255, 255, 0.075);
+	border-left: solid 1px;
 }
 
 table th {
@@ -2961,14 +2972,22 @@ table tbody tr {
 
 table tbody tr:nth-child(2n + 1) {
 	background-color: rgba(255, 255, 255, 0.075);
+		
+
 }
 
 table th {
-	color: #ffffff;
+	font-style: italic;
+	color: #2c2c2c;
+	/* font size 20% bigger */
+	font-size: 1.2em;
 }
 
 table thead {
 	border-bottom-color: rgba(255, 255, 255, 0.35);
+	/* text color black and italicized and bold */
+	color: #2c2c2c;
+
 }
 
 table tfoot {
