@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gestione_Permessi</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        //make documet ready
+        $(document).ready(function () {
+            $("#add_perm_form").submit(function (e) {
+                console.log("submitting form");
+                e.preventDefault(); // avoid to execute the actual submit of the form.
+
+                const form = $(this);
+                const p = $(this).find('#p').val();
+                {#se p è ""#}
+                if (p === "") {
+                    form.attr('action', '/dashboard/gest_perm/add_perm');
+                } else {
+                    form.attr('action', '/dashboard/gest_perm/change/' + p);
+
+                }
+
+                const actionUrl = form.attr('action');
+
+                console.log(form.serialize()); // Debugging code to print out form data
+
+                $.ajax({
+                    type: "POST",
+                    url: actionUrl,
+                    data: new FormData(this), // Use FormData object to include file data
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        //se data è "errore" vuol dire che c'è stato un errore
+                        if (data === "errore") {
+                            alert("errore");
+                        } else {
+                            alert("successo");
+                            //redirect to gestione permessi
+                            window.location.href = "/dashboard/gest_perm";
+
+                        }
+                    }
+                });
+            });
+
+        })
+
+    </script>
+
+</head>
+<body>
+<style>
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: Arial, sans-serif;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    input[type="text"], input[type="file"], input[type="submit"] {
+        margin-bottom: 20px;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    #image-box {
+        background-color: #eee;
+        width: 400px;
+        height: 400px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    #preview, #videoElement {
+        display: none;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    #image-buttons {
+        display: flex;
+    }
+
+    #image-buttons button, #image-buttons span {
+        margin-right: 10px;
+    }
+
+    #scatta {
+        display: none;
+    }
+
+</style>
+
+<form id="add_perm_form" action='/dashboard/gest_perm/add_perm' method="post" enctype="multipart/form-data">
+    <label for="name">Nome:</label>
+    <input type="text" id="nome" name="nome" value="{{ nome }}">
+    <label for="surname">Cognome:</label>
+    <input type="text" id="cognome" name="cognome" value="{{ cognome }}">
+
+    <label for="image">Immagine:</label>
+    <div id="image-box">
+        <img id="preview" src="#" alt="Immagine selezionata">
+        <video id="videoElement" autoplay muted></video>
+        <div id="image-buttons">
+            <button type="button" onclick="choseImage()">Carica immagine</button>
+            <span>o</span>
+            <button type="button" id="startcamera" onclick="startCamera()">Usa Camera</button>
+            <button type="button" id="scatta" onclick="capture()">Scatta</button>
+        </div>
+    </div>
+    <br>
+    <div>
+        <input type="file" id="image-input" name="image" accept="image/*" onchange="previewImage(event);">
+        <input type="submit" value="Invia">
+    </div>
+
+</form>
+
+<script>
+    let fromCamera = true;
+
+    function choseImage() {
+        fromCamera = false;
+        document.getElementById('image-input').click();
+    }
+
+    function previewImage(event) {
+        var imageBox = document.getElementById('image-box');
+        var imageButtons = document.getElementById('image-buttons');
+        var preview = document.getElementById('preview');
+
+        imageBox.style.background = 'none';
+        preview.style.display = 'block';
+        if (!fromCamera) {
+            preview.src = URL.createObjectURL(event.target.files[0]);
+        }
+
+        imageButtons.style.display = 'flex';
+    }
+
+    document.addEventListener("DOMContentLoaded", function (event) {
+        var imageBox = document.getElementById('image-box');
+        var imageButtons = document.getElementById('image-buttons');
+
+        imageBox.appendChild(imageButtons);
+    });
+
+
+    const videoElement = document.getElementById('videoElement');
+    let mediaStream = null;
+
+    function startCamera() {
+        navigator.mediaDevices.getUserMedia({video: true}).then(gotMedia).catch(error =>
+            console.error('getUserMedia() error:', error));
+        const vid = document.getElementById('videoElement');
+        vid.style.display = 'block';
+        const scatta = document.getElementById('scatta');
+        scatta.style.display = 'block';
+        const startcamera = document.getElementById('startcamera');
+        startcamera.style.display = 'none';
+    }
+
+    function gotMedia(stream) {
+        mediaStream = stream;
+        videoElement.srcObject = mediaStream;
+        videoElement.addEventListener('loadedmetadata', function () {
+            videoElement.play();
+        });
+    }
+
+    function capture() {
+        const canvasElement = document.createElement('canvas');
+        const context = canvasElement.getContext('2d');
+        canvasElement.width = videoElement.videoWidth;
+        canvasElement.height = videoElement.videoHeight;
+
+        context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+        const imageData = canvasElement.toDataURL('image/png');
+
+        img = document.getElementById("preview");
+        img.src = imageData;
+
+        // Pause the video and display the current frame as an image
+        {#videoElement.pause();#}
+        videoElement.style.display = 'none';
+        img.style.display = 'block';
+        img.src = imageData;
+
+    }
+
+    function dataURItoBlob(dataURI) {
+        const byteString = atob(dataURI.split(',')[1]);
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab], {type: 'image/png'});
+    }
+
+</script>
+
+</body>
+</html>
