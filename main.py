@@ -64,6 +64,11 @@ def main():
     return render_template('index.html')
 
 
+# @app.route('/test', methods=['GET'])
+# def test():
+#     return redirect(url_for('static', filename='test.html'))
+
+
 def list_bucket_files():
     # Create a GCS client
     client = storage.Client.from_service_account_json(
@@ -110,9 +115,8 @@ def gest_perm():
 @login_required
 def add_perm():
     # se il metodo è get allora carico la pagina
-
     if request.method == 'GET':
-        return url_for('static', filename='add_perm.html')
+        return render_template('add_perm_tmp.html', nome="", cognome="", p="")
     # se il metodo è post allora salvo i dati nel db su cloud storage
     else:
         client = storage.Client.from_service_account_json(
@@ -150,13 +154,11 @@ def add_perm():
 @app.route('/dashboard/gest_perm/delete/<p>', methods=['POST'])
 @login_required
 def delete(p):
-    print(p)
     client = storage.Client.from_service_account_json(
         'facerecognition2023-84f934357826.json')
     bucket = client.bucket('face_db')
     blob = bucket.blob('Permessi.json')
     perm = json.load(BytesIO(blob.download_as_string()))
-    print(perm)
     # cancella la persona dal json
     del perm[p]
     # ricarica il json
@@ -167,21 +169,44 @@ def delete(p):
     return "deleted"
 
 
-# @app.route('/upload_data_buffer', methods=['POST'])
-# def upload_data_buffer():
-#     # print(request.form)
-#     print(json.loads(request.values['data']))
-#     return 'saved'
-
-
-# @app.route('/upload_data', methods=['POST'])
-# def upload_data():
-#     i = request.form.get("i")
-#     j = request.form.get("j")
-#     k = request.form.get("k")
-#     print(i, j, k)
-
-#     return 'saved'
+@app.route('/dashboard/gest_perm/change/<p>', methods=['GET', 'POST'])
+@login_required
+def change(p):
+    if request.method == 'GET':
+        client = storage.Client.from_service_account_json('cred.json')
+        bucket = client.bucket('face_db')
+        perm = bucket.blob('Permessi.json')
+        n_c = perm[p]
+        nome = n_c.split("__")[0]
+        cognome = n_c.split("__")[1].replace("_", " ")
+        foto =  bucket.blob('training/' + p + '.png')
+        return render_template('add_perm_tmp.html', nome=nome, cognome=cognome, p=p)
+    # se il metodo è post allora salvo i dati nel db su cloud storage
+    else:
+        client = storage.Client.from_service_account_json('cred.json')
+        bucket = client.bucket('face_db')
+        blob = bucket.blob('Permessi.json')
+        perm = json.load(BytesIO(blob.download_as_string()))
+        identificativo = p
+        keys = list(perm.keys())
+        # prendo i dati dal form
+        nome = request.form['nome']
+        cognome = request.form['cognome']
+        n_c = nome + "__" + cognome.replace(" ", "_")
+        image = request.files.get('image')
+        # se tutti i campi sono stati riempiti
+        if nome and cognome:
+            perm[identificativo] = n_c
+            blob.upload_from_string(json.dumps(perm))
+            if image:
+                blob = bucket.blob('training/' + identificativo + '.png')
+                blob.upload_from_string(image.read(), content_type=image.content_type)
+                # inizia il processo di encoding del nuovo set di volti
+                frec = FaceRecognition()
+                frec.encode_known_faces()
+            return "saved"
+        else:
+            return "error"
 
 
 @app.route('/upload', methods=['POST'])

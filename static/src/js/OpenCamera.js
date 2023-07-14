@@ -1,27 +1,4 @@
 function openCamera() {
-    
-    // // get the operating system and browser
-    // var OSName = "Unknown OS";
-    // if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
-    // if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
-    // if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
-
-    // var browserName = navigator.appName;
-    // if (navigator.appVersion.indexOf("Edg") != -1) browserName = "Edge";
-    // if (navigator.appVersion.indexOf("Chrome") != -1) browserName = "Chrome";
-    // if (navigator.appVersion.indexOf("Safari") != -1) browserName = "Safari";
-
-    // // for chrome and windows we have to use the old method
-    // - if (browserName == "Chrome" && OSName == "Windows") {
-    //     navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
-    //         console.error('getUserMedia() error:', error));
-    // } else if (browserName == "Safari" && OSName == "MacOS") {
-    //     navigator.mediaDevices.webkitGetUserMedia({ video: true }).then(gotMedia).catch(error =>
-    //         console.error('getUserMedia() error:', error));
-    // } else if (browserName == "Chrome" && OSName == "MacOS") {
-    //     navigator.mediaDevices.getDisplayMedia({ video: true }).then(gotMedia).catch(error =>
-    //         console.error('getDisplayMedia() error:', error));
-    // }
 
     navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
         console.error('getUserMedia() error:', error));
@@ -66,6 +43,41 @@ function openCamera() {
         });
     }
     setTimeout(result,3000);
+}
+
+// Funzione per convertire un Data URI in un oggetto Blob
+function dataURItoBlob(dataURI) {
+    var byteString = atob(dataURI.split(',')[1]);
+    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: mimeString });
+}
+    // // get the operating system and browser
+    // var OSName = "Unknown OS";
+    // if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
+    // if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
+    // if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
+
+    // var browserName = navigator.appName;
+    // if (navigator.appVersion.indexOf("Edg") != -1) browserName = "Edge";
+    // if (navigator.appVersion.indexOf("Chrome") != -1) browserName = "Chrome";
+    // if (navigator.appVersion.indexOf("Safari") != -1) browserName = "Safari";
+
+    // // for chrome and windows we have to use the old method
+    // - if (browserName == "Chrome" && OSName == "Windows") {
+    //     navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
+    //         console.error('getUserMedia() error:', error));
+    // } else if (browserName == "Safari" && OSName == "MacOS") {
+    //     navigator.mediaDevices.webkitGetUserMedia({ video: true }).then(gotMedia).catch(error =>
+    //         console.error('getUserMedia() error:', error));
+    // } else if (browserName == "Chrome" && OSName == "MacOS") {
+    //     navigator.mediaDevices.getDisplayMedia({ video: true }).then(gotMedia).catch(error =>
+    //         console.error('getDisplayMedia() error:', error));
+    // }
 //    function gotMedia(mediaStream) {
 //        const mediaStreamTrack = mediaStream.getVideoTracks()[0];
 //
@@ -107,16 +119,3 @@ function openCamera() {
 //
 //        capture();
 //    }
-}
-
-// Funzione per convertire un Data URI in un oggetto Blob
-function dataURItoBlob(dataURI) {
-    var byteString = atob(dataURI.split(',')[1]);
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: mimeString });
-}
