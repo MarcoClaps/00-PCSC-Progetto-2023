@@ -1,5 +1,5 @@
+import base64
 import json
-from datetime import datetime
 from io import BytesIO
 from tabulate import tabulate
 from datetime import datetime, timedelta
@@ -122,13 +122,13 @@ def load_dashboard():
         filesProcessed.append([accessName, accessTime])
 
     tabulated = tabulate(filesProcessed, tablefmt="html",
-                         headers=["Name","Access Time"])
+                         headers=["Name", "Access Time"])
     # print(tabulated)
     # # iterate over the td elements and add the link to the image
     tabulated_rows = tabulated.split("<tr>")
     for row in range(2, len(tabulated_rows)):
         tabulated_cols = tabulated_rows[row].split("<td>")
-        tabulated_cols[1] = f"<a href='{links[row-2]}'>{tabulated_cols[1]}"
+        tabulated_cols[1] = f"<a href='{links[row - 2]}'>{tabulated_cols[1]}"
         # rejoin cols
         tabulated_rows[row] = "<td>".join(tabulated_cols)
 
@@ -160,7 +160,8 @@ def gest_perm():
 def add_perm():
     # se il metodo è get allora carico la pagina
     if request.method == 'GET':
-        return render_template('add_perm_tmp.html', nome="", cognome="", p="")
+        return render_template('add_perm_tmp.html', nome=json.dumps(""), cognome=json.dumps(""),
+                               p=json.dumps(""), image=json.dumps(""))
     # se il metodo è post allora salvo i dati nel db su cloud storage
     else:
         client = storage.Client.from_service_account_json(
@@ -181,7 +182,7 @@ def add_perm():
             identificativo = identificativo + "_" + str(len(cognome))
         while identificativo in keys:
             identificativo = identificativo[:-1] + \
-                str(int(identificativo.split("_")[2]) + 1)
+                             str(int(identificativo.split("_")[2]) + 1)
         # se tutti i campi sono stati riempiti
         if nome and image and cognome:
             perm[identificativo] = n_c
@@ -192,9 +193,9 @@ def add_perm():
             # inizia il processo di encoding del nuovo set di volti
             frec = FaceRecognition()
             frec.encode_known_faces()
-            return "saved"
+            return "saved_add"
         else:
-            return "error"
+            return "error_add"
 
 
 @app.route('/dashboard/gest_perm/delete/<p>', methods=['POST'])
@@ -215,26 +216,40 @@ def delete(p):
     return "deleted"
 
 
+@app.route('/image/<p>')
+def get_image(p):
+    # get the image data from your database or wherever it is stored
+    client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+    bucket = client.bucket('face_db')
+    blob = bucket.blob('training/' + p + '.png')
+    image_data = blob.download_as_string()
+    # convert the image data to base64 encoding
+    encoded_image = base64.b64encode(image_data).decode('utf-8')
+    # return the encoded image as a JSON response
+    return {'image': encoded_image}
+
+
 @app.route('/dashboard/gest_perm/change/<p>', methods=['GET', 'POST'])
 @login_required
 def change(p):
     if request.method == 'GET':
-        client = storage.Client.from_service_account_json('cred.json')
+        client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
         bucket = client.bucket('face_db')
-        perm = bucket.blob('Permessi.json')
+        blob = bucket.blob('Permessi.json')
+        perm = json.load(BytesIO(blob.download_as_string()))
         n_c = perm[p]
         nome = n_c.split("__")[0]
         cognome = n_c.split("__")[1].replace("_", " ")
-        foto =  bucket.blob('training/' + p + '.png')
-        return render_template('add_perm_tmp.html', nome=nome, cognome=cognome, p=p)
+
+        return render_template('add_perm_tmp.html', nome=nome, cognome=cognome, p=json.dumps(p))
     # se il metodo è post allora salvo i dati nel db su cloud storage
     else:
-        client = storage.Client.from_service_account_json('cred.json')
+        print("ciao")
+        client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
         bucket = client.bucket('face_db')
         blob = bucket.blob('Permessi.json')
         perm = json.load(BytesIO(blob.download_as_string()))
         identificativo = p
-        keys = list(perm.keys())
         # prendo i dati dal form
         nome = request.form['nome']
         cognome = request.form['cognome']
@@ -250,9 +265,11 @@ def change(p):
                 # inizia il processo di encoding del nuovo set di volti
                 frec = FaceRecognition()
                 frec.encode_known_faces()
-            return "saved"
+            else:
+                print("no image changed")
+            return "saved_change"
         else:
-            return "error"
+            return "error_change"
 
 
 @app.route('/upload', methods=['POST'])
