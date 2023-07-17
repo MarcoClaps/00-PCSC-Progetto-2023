@@ -5,7 +5,6 @@ import pickle
 from collections import Counter
 from PIL import Image, ImageDraw
 from google.cloud import storage
-import numpy as np
 
 
 class FaceRecognition():
