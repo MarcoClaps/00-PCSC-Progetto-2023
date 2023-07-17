@@ -2,70 +2,27 @@
 <html>
 <head>
     <title>Gestione_Permessi</title>
+    <link rel="stylesheet" type="text/css" href="../static/src/css/gest_perm_tmp.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <script>
-        function navigate() {
-            var selectedOption = document.getElementById("menu").value;
-            if (selectedOption === "login_page") {
-                window.location.href = "login_page.html";
-            } else if (selectedOption === "Landing_Page") {
-                window.location.href = "Landing_Page.html";
-            }
-        }
-
-        $(document).ready(function () {
-            // Aggiungi un gestore di eventi al pulsante
-            $('.delete_button').click(function () {
-                var p = $(this).data('p');
-                var n = $(this).data('n');
-                var nn = n.replace(/_/g, ' ');
-                // Mostra la finestra popup di conferma
-                if (confirm('Sei sicuro di voler cancellare ' + nn + '?')) {
-                    // Se l'utente ha cliccato su "OK", esegui il codice qui
-                    console.log('L\'utente ha cliccato su OK');
-                    // Esempio: reindirizza l'utente a una nuova pagina
-                    {#go to '/dashboard/gest_perm/delete/'+p whith Post method#}
-                    $.ajax({
-                        url: '/dashboard/gest_perm/delete/' + p,
-                        type: 'POST',
-                        data: {
-                            csrfmiddlewaretoken: '{{ csrf_token }}'
-                        },
-                        success: function (response) {
-                            console.log(response);
-                            window.location.reload();
-                        },
-                        error: function (response) {
-                            console.log(response);
-                        }
-                    });
-                } else {
-                    // Se l'utente ha cliccato su "Annulla", esegui il codice qui
-                    console.log('L\'utente ha cliccato su Annulla');
-                }
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </head>
 <body>
+    <div class="container">
+        <div style="text-align: left;">
+            <a href="/dashboard/gest_perm/add_perm" class="button">Aggiungi permessi</a>
+            <a href="/logout" class="button">Logout</a>
+        </div>
+        <br>
 
-
-<a href='/dashboard/gest_perm/add_perm' id="aggiungi permessi">aggiungi permessi</a> <br>
-
-<!-- <a href="login_page.html" id="login_page">login page</a><br> -->
-<!-- Contenuto della Sezione 1 -->
-
-<a href="../static/Landing_Page.html" id="Landing_Page">Landing_Page</a><br>
-<!-- Contenuto della Sezione 2 -->
- {% for p in perm.keys() %}
-  {{ perm[p].replace("_"," ") }}
-     <button class=delete_button type="button" data-p={{p}} data-n={{perm[p]}}>cancella</button>
-     <button type="button" onclick="location.href='/dashboard/gest_perm/change/{{p}}'">modifica</button>
-     <br>
-{% endfor %}
-<br>
-<a href="/logout">logout</a>
-
+        <div class="name">
+            {% for p in perm.keys() %}
+                {{ perm[p].replace("_", " ") }}
+                <br>
+                <button class="delete_button" type="button" data-p="{{ p }}" data-n="{{ perm[p] }}">Cancella</button>
+                <button class="edit_button" type="button" onclick="location.href='/dashboard/gest_perm/change/{{ p }}'">Modifica</button>
+                <br><br>
+            {% endfor %}
+        </div>
+    </div>
 </body>
 </html>
