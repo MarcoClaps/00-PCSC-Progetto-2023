@@ -3,94 +3,142 @@
 <html>
 <head>
     <title>Gestione_Permessi</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: orange;
-        }
-
-        form {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
-        }
-
-        label {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        input[type="text"],
-        input[type="file"],
-        input[type="submit"] {
-            margin-bottom: 8px;
-            padding: 10px;
-            border-radius: 5px;
-            border: none;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            margin-right: auto;
-            margin-left: auto;
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        #image-box {
-            background-color: #eee;
-            width: 400px;
-            height: 400px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            margin: 0 auto;
-            margin-bottom: 20px;
-        }
-
-        #preview,
-        #videoElement {
-            display: none;
-            max-width: 100%;
-            max-height: 100%;
-        }
-
-        #image-buttons {
-            display: flex;
-            margin-top: 10px;
-        }
-
-        #image-buttons button,
-        #image-buttons span {
-            margin-right: 10px;
-        }
-
-        #scatta {
-            display: none;
-        }
-
-        input[type="submit"] {
-            background-color: blue;
-            color: #fff;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: darkblue;
-        }
-    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+{#    link to the external CSS file#}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/src/css/add_perm_tmp.css') }}">
 </head>
 <body>
-<form id="add_perm_form" action='/dashboard/gest_perm/add_perm' method="post" enctype="multipart/form-data">
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" value="{{ nome }}" style="margin-bottom: 5px;">
-    <label for="cognome">Cognome:</label>
-    <input type="text" id="cognome" name="cognome" value="{{ cognome }}" style="margin-bottom: 15px;">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: orange;
+    }
 
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-family: Arial, sans-serif;
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #fff;
+    }
+
+    label {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    input[type="text"],
+    input[type="file"],
+    input[type="submit"] {
+        margin-bottom: 8px;
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        margin-right: auto;
+        margin-left: auto;
+    }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    #image-box {
+        background-color: #eee;
+        width: 400px;
+        height: 400px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        margin: 0 auto;
+        margin-bottom: 20px;
+    }
+
+    #preview,
+    #videoElement {
+        display: none;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    #image-buttons {
+        display: flex;
+        margin-top: 10px;
+    }
+
+    #image-buttons button,
+    #image-buttons span {
+        margin-right: 10px;
+    }
+
+    #scatta {
+        display: none;
+    }
+
+    input[type="submit"] {
+        background-color: blue;
+        color: #fff;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: darkblue;
+    }
+
+    #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+
+    #modal {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+    }
+
+    #loader {
+        border: 16px solid #f3f3f3;
+        border-top: 16px solid #3498db;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+</style>
+
+<form id="add_perm_form" action='/dashboard/gest_perm/add_perm' method="post" enctype="multipart/form-data">
+    <label for="name">Nome:</label>
+    <input type="text" id="nome" name="nome" value="{{ nome |safe }}">
+    <label for="surname">Cognome:</label>
+    <input type="text" id="cognome" name="cognome" value="{{ cognome |safe }}">
+
+    <label for="image">Immagine:</label>
     <div id="image-box">
         <img id="preview" src="#" alt="Immagine selezionata">
         <video id="videoElement" autoplay muted></video>
@@ -101,13 +149,69 @@
             <button type="button" id="scatta" onclick="capture()">Scatta</button>
         </div>
     </div>
-
-    <input type="file" id="image-input" name="image" accept="image/*" onchange="previewImage(event);">
-    <input type="submit" value="Invia">
+    <br>
+    <div>
+        <input type="file" id="image-input" name="image" accept="image/*" onchange="previewImage(event);">
+        <input type="submit" value="Invia">
+    </div>
 </form>
 
+<div id="overlay">
+    <div id="modal">
+        <div id="loader"></div>
+        <p>Attendere prego...</p>
+    </div>
+</div>
 <script>
     let fromCamera = true;
+    const form = $("#add_perm_form")
+    const p = {{p|safe}};
+    if (p === "") {
+        form.attr('action', '/dashboard/gest_perm/add_perm');
+    } else {
+        form.attr('action', '/dashboard/gest_perm/change/' + p);
+        fetch('/image/' + p).then(response => response.json()).then(data => {
+            const img = document.getElementById('preview');
+
+            img.src = `data:image/jpeg;base64,${data.image}`;
+            //carica immagine nel input type file "image-input"
+            document.getElementById('image-input').files[0] = img;
+        });
+        previewImage();
+
+
+    }
+
+
+    form.submit(function (e) {
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+
+        const form = $(this);
+
+        const actionUrl = form.attr('action');
+        overlay.style.display = 'block';
+        const fd = new FormData(this)
+        $.ajax({
+            type: "POST",
+            url: actionUrl,
+            data: fd, // Use FormData object to include file data
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                //se data è "errore" vuol dire che c'è stato un errore
+                //if (data === "error") {
+                //    alert(data);
+                //} else {
+                alert(data);
+                //redirect to gestione permessi
+                window.location.href = "/dashboard/gest_perm";
+
+                //}
+            }
+        });
+
+    })
+
 
     function choseImage() {
         fromCamera = false;
@@ -115,10 +219,9 @@
     }
 
     function previewImage(event) {
-        var imageBox = document.getElementById('image-box');
-        var imageButtons = document.getElementById('image-buttons');
-        var preview = document.getElementById('preview');
-
+        const imageBox = document.getElementById('image-box');
+        const imageButtons = document.getElementById('image-buttons');
+        const preview = document.getElementById('preview');
         imageBox.style.background = 'none';
         preview.style.display = 'block';
         if (!fromCamera) {
@@ -128,9 +231,9 @@
         imageButtons.style.display = 'flex';
     }
 
-    document.addEventListener("DOMContentLoaded", function (event) {
-        var imageBox = document.getElementById('image-box');
-        var imageButtons = document.getElementById('image-buttons');
+    document.addEventListener("DOMContentLoaded", function () {
+        const imageBox = document.getElementById('image-box');
+        const imageButtons = document.getElementById('image-buttons');
 
         imageBox.appendChild(imageButtons);
     });
@@ -148,6 +251,10 @@
         scatta.style.display = 'block';
         const startcamera = document.getElementById('startcamera');
         startcamera.style.display = 'none';
+        const preview = document.getElementById('preview');
+        if (preview.style.display === 'block') {
+            preview.style.display = 'none';
+        }
     }
 
     function gotMedia(stream) {
@@ -166,35 +273,54 @@
 
         context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
         const imageData = canvasElement.toDataURL('image/png');
-
-        img = document.getElementById("preview");
-        img.src = imageData;
+        const img = document.getElementById("preview");
+        // Pause the video and display the current frame as an image
+        // #videoElement.pause();
 
         videoElement.style.display = 'none';
         img.style.display = 'block';
         img.src = imageData;
+
+        // Leggi la stringa di codifica in base64 come un blob e avvia la lettura del file
+        const blob = b64toBlob(imageData);
+        const file = new File([blob], "image.png", {type: "image/png"});
+        const input = document.getElementById('image-input');
+
+        // Crea un oggetto DataTransfer
+        const dataTransfer = new DataTransfer();
+
+        // Aggiungi il file all'oggetto DataTransfer
+        dataTransfer.items.add(file);
+
+        // Imposta la proprietà 'files' dell'elemento input utilizzando l'oggetto DataTransfer
+        input.files = dataTransfer.files;
     }
 
-    function dataURItoBlob(dataURI) {
+    // Converti una stringa di codifica in base64 in un oggetto Blob
+    function b64toBlob(dataURI) {
         const byteString = atob(dataURI.split(',')[1]);
+        const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
         const ab = new ArrayBuffer(byteString.length);
         const ia = new Uint8Array(ab);
         for (let i = 0; i < byteString.length; i++) {
             ia[i] = byteString.charCodeAt(i);
         }
-        return new Blob([ab], {type: 'image/png'});
+        return new Blob([ab], {type: mimeString});
     }
+
+    const overlay = document.getElementById('overlay');
+
 </script>
 
 </body>
 </html>
--->
 
+<!--
 <!DOCTYPE html>
 <html>
 <head>
     <title>Gestione_Permessi</title>
-    <link rel="stylesheet" type="text/css" href=>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
 <form id="add_perm_form" action='/dashboard/gest_perm/add_perm' method="post" enctype="multipart/form-data">
@@ -224,3 +350,4 @@
 </html>
 
 
+-->
