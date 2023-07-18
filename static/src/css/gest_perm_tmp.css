@@ -1,9 +1,5 @@
 body {
-<<<<<<< HEAD
     background: url("../img/bodyBackground.jpg");
-=======
-    background-image: url("../img/bodyBackground.jpg");
->>>>>>> 9ad9644ce6e52a53913d4de925490e4c4439a3b9
     margin: 0;
     padding: 0;
 }
