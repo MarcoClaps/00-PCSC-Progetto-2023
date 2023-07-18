@@ -1,13 +1,85 @@
+let camera_start = false;
+
+function startCamera() {
+    camera_start = true;
+    navigator.mediaDevices.getUserMedia({video: true}).then(gotMedia).catch(error =>
+        console.error('getUserMedia() error:', error));
+    const vid = document.getElementById('videoElement');
+    vid.style.display = 'block';
+    // const scatta = document.getElementById('scatta');
+    // scatta.style.display = 'block';
+    const startcamera = document.getElementById('startcamera');
+    startcamera.style.display = 'none';
+}
+
+function gotMedia(mediaStream) {
+    const videoElement = document.getElementById('videoElement');
+    videoElement.srcObject = mediaStream;
+    videoElement.addEventListener('loadedmetadata', function () {
+        videoElement.play();
+    });
+}
+
+function capture() {
+    if (!camera_start) {
+        startCamera()
+    }
+    const canvasElement = document.createElement('canvas');
+    const context = canvasElement.getContext('2d');
+    canvasElement.width = videoElement.videoWidth;
+    canvasElement.height = videoElement.videoHeight;
+
+    context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+    const imageData = canvasElement.toDataURL('image/png');
+    const img = document.getElementById("camera");
+    // Pause the video and display the current frame as an image
+    // #videoElement.pause();
+
+    videoElement.style.display = 'none';
+    img.style.display = 'block';
+    img.src = imageData;
+
+    // Leggi la stringa di codifica in base64 come un blob e avvia la lettura del file
+    const blob = b64toBlob(imageData);
+    const file = new File([blob], "image.png", {type: "image/png"});
+    const fd = new FormData();
+
+    fd.append('file', file);
+
+    $.ajax({
+        type: 'POST',
+        url: '/upload',
+        data: fd,
+        processData: false,
+        contentType: false
+    }).done(function (data) {
+        $('#result').text(data);
+        console.log(data);
+    });
+}
+
+// Converti una stringa di codifica in base64 in un oggetto Blob
+function b64toBlob(dataURI) {
+    const byteString = atob(dataURI.split(',')[1]);
+    const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], {type: mimeString});
+}
+
 function openCamera() {
 
-    navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
+    navigator.mediaDevices.getUserMedia({video: true}).then(gotMedia).catch(error =>
         console.error('getUserMedia() error:', error));
 
     function gotMedia(mediaStream) {
         const videoElement = document.createElement('video');
         videoElement.srcObject = mediaStream;
 
-        videoElement.addEventListener('loadedmetadata', function() {
+        videoElement.addEventListener('loadedmetadata', function () {
             videoElement.play();
 
             const canvasElement = document.createElement('canvas');
@@ -19,11 +91,11 @@ function openCamera() {
                 context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
                 const imageData = canvasElement.toDataURL('image/png');
 
-                img = document.getElementById("camera");
+                let img = document.getElementById("camera");
                 img.src = imageData;
 
-                var fd = new FormData();
-                fd.append('file', dataURItoBlob(imageData), 'screenshot.png');
+                const fd = new FormData();
+                fd.append('file', b64toBlob(imageData), 'screenshot.png');
 
                 $.ajax({
                     type: 'POST',
@@ -42,80 +114,4 @@ function openCamera() {
             capture();
         });
     }
-    setTimeout(result,3000);
 }
-
-// Funzione per convertire un Data URI in un oggetto Blob
-function dataURItoBlob(dataURI) {
-    var byteString = atob(dataURI.split(',')[1]);
-    var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: mimeString });
-}
-    // // get the operating system and browser
-    // var OSName = "Unknown OS";
-    // if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
-    // if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
-    // if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
-
-    // var browserName = navigator.appName;
-    // if (navigator.appVersion.indexOf("Edg") != -1) browserName = "Edge";
-    // if (navigator.appVersion.indexOf("Chrome") != -1) browserName = "Chrome";
-    // if (navigator.appVersion.indexOf("Safari") != -1) browserName = "Safari";
-
-    // // for chrome and windows we have to use the old method
-    // - if (browserName == "Chrome" && OSName == "Windows") {
-    //     navigator.mediaDevices.getUserMedia({ video: true }).then(gotMedia).catch(error =>
-    //         console.error('getUserMedia() error:', error));
-    // } else if (browserName == "Safari" && OSName == "MacOS") {
-    //     navigator.mediaDevices.webkitGetUserMedia({ video: true }).then(gotMedia).catch(error =>
-    //         console.error('getUserMedia() error:', error));
-    // } else if (browserName == "Chrome" && OSName == "MacOS") {
-    //     navigator.mediaDevices.getDisplayMedia({ video: true }).then(gotMedia).catch(error =>
-    //         console.error('getDisplayMedia() error:', error));
-    // }
-//    function gotMedia(mediaStream) {
-//        const mediaStreamTrack = mediaStream.getVideoTracks()[0];
-//
-//        // // set imageCapture based on the browser and operating system
-//        // if (browserName == "Chrome" && OSName == "Windows") {
-//        //     const imageCapture = new ImageCapture(mediaStreamTrack);
-//        // } else if (browserName == "Safari" && OSName == "MacOS") {
-//        //     const imageCapture = new ImageCapture(mediaStreamTrack);
-//        // }
-//        const imageCapture = new ImageCapture(mediaStreamTrack);
-//
-//        //console.log(imageCapture);
-//
-//        function capture() {
-//            imageCapture.takePhoto().then(blob => {
-//                img = document.getElementById("img")
-//                img.src = URL.createObjectURL(blob);
-//
-//                var fd = new FormData();
-//                fd.append('file', blob, 'screenshot.png');
-//
-//                $.ajax({
-//                    type: 'POST',
-//                    url: '/upload',
-//                    data: fd,
-//                    processData: false,
-//                    contentType: false
-//                }).done(function (data) {
-//                    $('#result').text(data);
-//                    console.log(data);
-//                });
-//
-//                img.onload = () => {
-//                    URL.revokeObjectURL(this.src);
-//                }
-//            }).catch(error => console.error('takePhoto() error:', error));
-//            window.setTimeout(capture, 100000)
-//        }
-//
-//        capture();
-//    }
