@@ -115,3 +115,7 @@ function openCamera() {
         });
     }
 }
+
+function result() {
+    document.getElementById("result").style.display = "block"
+}

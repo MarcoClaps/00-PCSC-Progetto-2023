@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Gestione_Permessi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=0.8, user-scalable=no"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/src/css/add_perm_tmp.css') }}">
 </head>
@@ -11,9 +12,12 @@
 <form id="add_perm_form" action='/dashboard/gest_perm/add_perm' method="post" enctype="multipart/form-data">
     <label for="name">Nome:</label>
     <input type="text" id="nome" name="nome" value="{{ nome |safe }}">
+    <br>
+    <br>
     <label for="surname">Cognome:</label>
     <input type="text" id="cognome" name="cognome" value="{{ cognome |safe }}">
-
+    <br>
+    <br>
     <div id="image-box">
         <img id="preview" src="#" alt="Immagine selezionata">
         <video id="videoElement" autoplay muted></video>
@@ -67,7 +71,6 @@
 
         imageButtons.style.display = 'flex';
     }
-
 
 </script>
 <script src="{{ url_for('static', filename='/src/js/add_perm.js') }}"></script>
