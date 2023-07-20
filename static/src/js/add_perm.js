@@ -33,19 +33,6 @@ function choseImage() {
     document.getElementById('image-input').click();
 }
 
-function previewImage(event) {
-    const imageBox = document.getElementById('image-box');
-    const imageButtons = document.getElementById('image-buttons');
-    const preview = document.getElementById('preview');
-    imageBox.style.background = 'none';
-    preview.style.display = 'block';
-    if (!fromCamera) {
-        preview.src = URL.createObjectURL(event.target.files[0]);
-    }
-
-    imageButtons.style.display = 'flex';
-}
-
 document.addEventListener("DOMContentLoaded", function () {
     const imageBox = document.getElementById('image-box');
     const imageButtons = document.getElementById('image-buttons');
