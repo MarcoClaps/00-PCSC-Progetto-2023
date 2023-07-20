@@ -55,6 +55,7 @@ function capture() {
     }).done(function (data) {
         $('#result').text(data);
         console.log(data);
+        document.getElementById("result").style.display = "block";
     });
 }
 
@@ -105,7 +106,7 @@ function openCamera() {
                     contentType: false
                 }).done(function (data) {
                     $('#result').text(data);
-                    console.log(data);
+                    console.log(data);                
                 });
 
                 // window.setTimeout(capture, 100000);
@@ -114,8 +115,4 @@ function openCamera() {
             capture();
         });
     }
-}
-
-function result() {
-    document.getElementById("result").style.display = "block"
 }
