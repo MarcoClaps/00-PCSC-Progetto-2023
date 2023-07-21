@@ -201,6 +201,7 @@ class FaceRecognition():
         input_face_encodings = face_recognition.face_encodings(
             self.input_image, input_face_locations
         )
+        
         # generate the pillow image
         pillow_image = Image.fromarray(self.input_image)
         # create the draw object
