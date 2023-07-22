@@ -95,7 +95,7 @@ img{
   z-index: 2;
 }
 
-.result {
+#result {
   display: none;
   margin-top: 2% !important;
   overflow: hidden;
@@ -107,7 +107,6 @@ img{
   color:#f2f2f2;
   z-index: 2;
 }
-
 
 /* create a class that holds two images, on two different levels */
 .ccontent-img .img1 {
