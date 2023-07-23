@@ -37,7 +37,8 @@ function capture() {
 
     videoElement.style.display = 'none';
     img.style.display = 'block';
-    img.src = imageData;
+    // img.src = imageData;
+    img.src = `${imageData}?timestamp=${Date.now()}`;
 
     // Leggi la stringa di codifica in base64 come un blob e avvia la lettura del file
     const blob = b64toBlob(imageData);
