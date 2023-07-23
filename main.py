@@ -279,6 +279,7 @@ def upload():
     # check if the post request has the file part
     if request.method == 'POST':
         file = request.files['file']
+        print(file)
         # get the current time
         now = datetime.now()
         print("Accesso alle: ", now)

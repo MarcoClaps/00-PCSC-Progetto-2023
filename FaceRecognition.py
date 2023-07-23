@@ -119,7 +119,7 @@ class FaceRecognition():
         """
         boolean_matches = face_recognition.compare_faces(loaded_encodings["encodings"],
                                                          unknown_encoding)
-        votes=dict()
+        votes = dict()
         votes = Counter(name for match, name in
                         zip(boolean_matches, loaded_encodings["names"]) if match)
         # if a set of votes is created, return the most voted name
