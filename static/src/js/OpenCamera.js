@@ -44,7 +44,7 @@ function capture() {
     
 
     // Leggi la stringa di codifica in base64 come un blob e avvia la lettura del file
-    const blob = b64toBlob(imageData);
+    const blob = new b64toBlob(imageData);
     const file = new File([blob], uniqueFilename, {type: "image/png"});
     const fd = new FormData();
 
