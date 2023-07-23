@@ -46,8 +46,10 @@ class FaceRecognition():
         Path("face-recognizer/output").mkdir(exist_ok=True)
         Path("face-recognizer/validation").mkdir(exist_ok=True)
 
-    def set_parameters(self, input_image=None):
+    def set_parameters(self, input_image=None, validation_path=None):
         self.input_image = input_image
+        self.validation_path = validation_path
+        self.recognition_results = list()
         pass
 
     def encode_known_faces(self, model: str = "cnn"):
@@ -175,22 +177,26 @@ class FaceRecognition():
         print("Loading the image...")
 
         # Cloud file
-        bucket = self.cs_client.bucket('door_bell')
-        # load only the last image
-        blobs = bucket.list_blobs()
-        for filepath in blobs:
-            # pick only the last image
-            self.image_filepath = filepath
-            self.validation_path = filepath.name
+        # bucket = self.cs_client.bucket('door_bell')
+        # # load only the last image
+        # blobs = bucket.list_blobs()
+        # for filepath in blobs:
+        #     # pick only the last image
+        #     self.image_filepath = filepath
+        #     self.validation_path = filepath.name
         # print the path
         print("Looking for: ", self.validation_path)
         # append the path to the list
-        self.validation_images.append(self.image_filepath)
+        # self.validation_images.append(self.image_filepath)
 
         # Cloud file
         # download the image from the cloud so that's readable by face_recognition
-        self.input_image = face_recognition.load_image_file(
-            BytesIO(filepath.download_as_bytes()))
+        # self.input_image = face_recognition.load_image_file(
+        #     BytesIO(filepath.download_as_bytes()))
+        if self.input_image:
+            self.input_image = face_recognition.load_image_file(self.input_image)
+        else:
+            print("no image")
 
         print("Immagine trovata. Inizio riconoscimento... ")
         # find the faces in the image file

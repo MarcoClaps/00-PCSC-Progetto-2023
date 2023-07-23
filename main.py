@@ -219,6 +219,7 @@ def delete(p):
 
 
 @app.route('/image/<p>')
+@login_required
 def get_image(p):
     # get the image data from your database or wherever it is stored
     client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
@@ -265,7 +266,6 @@ def change(p):
                 blob = bucket.blob('training/' + identificativo + '.png')
                 blob.upload_from_string(image.read(), content_type=image.content_type)
                 # inizia il processo di encoding del nuovo set di volti
-                frec = FaceRecognition()
                 frec.encode_known_faces()
             else:
                 print("no image changed")
@@ -292,36 +292,36 @@ def upload():
         client = storage.Client.from_service_account_json(
             'facerecognition2023-84f934357826.json')
         bucket = client.bucket('door_bell')
-        source_file_name = fname
-        destination_blob_name = source_file_name
-        blob = bucket.blob(destination_blob_name)
 
         # blob.upload_from_string(file.read(), content_type=file.content_type)
-        blob.upload_from_file(file, content_type=file.content_type)
+        # blob.upload_from_file(file, content_type=file.content_type)
 
         # Face recognition
-        frec.set_parameters(fname)
+        frec.set_parameters(file, fname)
         # recognition_results should have only one element
         recognition_result = frec.recognize_faces()
 
         # first delete the image from the bucket of the doorbell
-        blob.delete()
+        # blob.delete()
         # then save the image in the bucket of the doorbell
         # source_file_name = fname
 
-        source_file_name = fname.split(".")[0] + '<->' + recognition_result[0]
-        destination_blob_name = source_file_name
-        blob = bucket.blob(destination_blob_name)
+        fname = f'{current_time}<->{recognition_result[0]}'
+
+        blob = bucket.blob(fname)
         result_file = recognition_result[1]
         blob.upload_from_string(result_file, content_type="image/png")
 
-        if recognition_result == 'Sconosciuto':
+        if recognition_result[0] == 'Sconosciuto':
+            print('Utente non riconosciuto')
             return 'Utente non riconosciuto'
         else:
+            print('Benvenuto ' + recognition_result[0].split('.p')[0])
             return 'Benvenuto ' + recognition_result[0].split('.p')[0]
 
 
 @app.route('/logout')
+@login_required
 def logout():
     logout_user()
     return redirect('/')
