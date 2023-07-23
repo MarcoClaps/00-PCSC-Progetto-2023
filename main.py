@@ -295,7 +295,8 @@ def upload():
         destination_blob_name = source_file_name
         blob = bucket.blob(destination_blob_name)
 
-        blob.upload_from_string(file.read(), content_type=file.content_type)
+        # blob.upload_from_string(file.read(), content_type=file.content_type)
+        blob.upload_from_file(file, content_type=file.content_type)
 
         # Face recognition
         frec.set_parameters(fname)
