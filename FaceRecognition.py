@@ -114,12 +114,12 @@ class FaceRecognition():
         Args:
             unknown_encoding (pkl): new encoding to compare
             loaded_encodings (pkl): encodings to compare
-
         Returns:
             name: the name of the person which is recognized as the most similar with the most votes
         """
         boolean_matches = face_recognition.compare_faces(loaded_encodings["encodings"],
                                                          unknown_encoding)
+        votes=dict()
         votes = Counter(name for match, name in
                         zip(boolean_matches, loaded_encodings["names"]) if match)
         # if a set of votes is created, return the most voted name
