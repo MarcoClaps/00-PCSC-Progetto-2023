@@ -1,0 +1,17 @@
+
+sudo apt-get install build-essential cmake pkg-config libx11-dev libatlas-base-dev libgtk-3-dev libboost-python-dev
+
+wget http://dlib.net/files/dlib-19.24.tar.bz2
+tar xvf dlib-19.24.tar.bz2
+cd dlib-19.24/
+mkdir build
+cd build
+cmake ..
+cmake --build . --config Release
+sudo make install
+sudo ldconfig
+cd ..
+pkg-config --libs --cflags dlib-1
+
+cd dlib-19.24
+python setup.py install
