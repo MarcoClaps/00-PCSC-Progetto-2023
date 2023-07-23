@@ -28,21 +28,24 @@ function capture() {
     const context = canvasElement.getContext('2d');
     canvasElement.width = videoElement.videoWidth;
     canvasElement.height = videoElement.videoHeight;
-
     context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
     const imageData = canvasElement.toDataURL('image/png');
+    
     const img = document.getElementById("camera");
     // Pause the video and display the current frame as an image
     // #videoElement.pause();
 
     videoElement.style.display = 'none';
     img.style.display = 'block';
-    // img.src = imageData;
-    img.src = `${imageData}?timestamp=${Date.now()}`;
+    img.src = imageData;
+
+    // Generate a unique filename for the image (you can use a timestamp or a random string)
+    const uniqueFilename = generateUniqueFilename();
+    
 
     // Leggi la stringa di codifica in base64 come un blob e avvia la lettura del file
     const blob = b64toBlob(imageData);
-    const file = new File([blob], "image.png", {type: "image/png"});
+    const file = new File([blob], uniqueFilename, {type: "image/png"});
     const fd = new FormData();
 
     fd.append('file', file);
@@ -70,6 +73,14 @@ function b64toBlob(dataURI) {
         ia[i] = byteString.charCodeAt(i);
     }
     return new Blob([ab], {type: mimeString});
+}
+
+// Function to generate a unique filename (you can use a timestamp or a random string)
+function generateUniqueFilename() {
+    // Implement your logic here to generate a unique filename
+    // For example, you can use a timestamp or a random string
+    // Example using a timestamp:
+    return `${Date.now()}.png`;
 }
 
 function openCamera() {
