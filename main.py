@@ -14,6 +14,10 @@ from google.cloud import firestore
 from FaceRecognition import FaceRecognition
 from User import User
 
+import plotly
+import plotly.express as px
+import pandas as pd
+
 # requires pyopenssl
 
 
@@ -122,7 +126,23 @@ def load_dashboard():
             else:
                 accessName = foto_split[1].replace('.png', '')
         filesProcessed.append([accessName, accessTime])
-
+        
+    # from filesProcessed create a dataframe
+    dfFilesProcessed = pd.DataFrame(filesProcessed, columns=["Name", "Access Time"])
+    # convert the access time to keep day, month and year and hour
+    dfFilesProcessed["Access Time"] = dfFilesProcessed["Access Time"].dt.strftime("%d/%m/%Y %H")
+    # now groupby the access time and count the number of access, put the result in a new column called "Numero Accessi"
+    dfFilesProcessed = dfFilesProcessed.groupby("Access Time").size().reset_index(name="Numero Accessi")
+    print(dfFilesProcessed)
+    # create the graph in plotly, in which the x axis is the access time and the y axis is the number of access.Barchart legend is the name of the person
+    fig = px.bar(dfFilesProcessed, x="Access Time", y="Numero Accessi")
+    # set y axs name to be "Accessi"
+    fig.update_yaxes(title_text="Accessi")
+    
+    # convert the graph in json   
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    
+    # create the table with the list of the files
     tabulated = tabulate(filesProcessed, tablefmt="html",
                          headers=["Name", "Access Time"])
     # print(tabulated)
@@ -136,10 +156,10 @@ def load_dashboard():
 
     # rejoin rows
     tabulated = "<tr>".join(tabulated_rows)
-
+    # here give the id to the table, which will be manipulated by the js script
     tabulated = tabulated.replace('<table>', '<table id="accessTable">')
 
-    return render_template('dashboard.html', listaFoto=tabulated)
+    return render_template('dashboard.html', listaFoto=tabulated, graphJSON=graphJSON)
     # return redirect(url_for('static', filename='dashboard.html'))
 
 
