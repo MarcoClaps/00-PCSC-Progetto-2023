@@ -126,7 +126,7 @@ def load_dashboard():
             else:
                 accessName = foto_split[1].replace('.png', '')
         filesProcessed.append([accessName, accessTime])
-        
+
     # from filesProcessed create a dataframe
     dfFilesProcessed = pd.DataFrame(filesProcessed, columns=["Name", "Access Time"])
     # convert the access time to keep day, month and year and hour
@@ -138,10 +138,10 @@ def load_dashboard():
     fig = px.bar(dfFilesProcessed, x="Access Time", y="Numero Accessi")
     # set y axs name to be "Accessi"
     fig.update_yaxes(title_text="Accessi")
-    
-    # convert the graph in json   
+
+    # convert the graph in json
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    
+
     # create the table with the list of the files
     tabulated = tabulate(filesProcessed, tablefmt="html",
                          headers=["Name", "Access Time"])
@@ -336,8 +336,12 @@ def upload():
             print('Utente non riconosciuto')
             return 'Utente non riconosciuto'
         else:
-            print('Benvenuto ' + recognition_result[0].split('.p')[0])
-            return 'Benvenuto ' + recognition_result[0].split('.p')[0]
+            if recognition_result[0] == '"Volto_non_trovato"':
+                print('Volto non trovato')
+                return 'Volto non trovato'
+            else:
+                print('Benvenuto ' + recognition_result[0].split('.p')[0])
+                return 'Benvenuto ' + recognition_result[0].split('.p')[0]
 
 
 @app.route('/logout')
