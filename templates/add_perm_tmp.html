@@ -7,9 +7,16 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='/src/css/add_perm_tmp.css') }}">
 </head>
 <body>
-
+   
+   
 
 <form id="add_perm_form" action='/dashboard/gest_perm/add_perm' method="post" enctype="multipart/form-data">
+    <div class="back-button">
+        <a href="/dashboard/gest_perm">
+            <span>&#129064;</span>
+        </a>
+        <br>
+        <br>
     <label for="name">Nome:</label>
     <input type="text" id="nome" name="nome" value="{{ nome |safe }}">
     <br>
@@ -23,7 +30,7 @@
         <video id="videoElement" autoplay muted></video>
         <div id="image-buttons">
             <button type="button" onclick="choseImage()">Carica immagine</button>
-            <span>o</span>
+            <span>---</span>
             <button type="button" id="startcamera" onclick="startCamera()">Usa Camera</button>
             <button type="button" id="scatta" onclick="capture()">Scatta</button>
         </div>
