@@ -308,6 +308,8 @@ def upload():
         print(file)
         # get the current time
         now = datetime.now()
+        # add 2 hours to the current time
+        now = now + timedelta(hours=2)
         print("Accesso alle: ", now)
         # formatto i nomi delle immagini come anno_mese_giorno__ora_minuti_secondi.png
         # Option 1 - Server side
