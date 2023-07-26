@@ -229,7 +229,7 @@ class FaceRecognition():
             self._display_face(draw, bounding_box, name)
         # print("Volto non trovato")
         if not self.recognition_results:
-            self.recognition_results.append("Volto_non_trovato")
+            self.recognition_results.append("Nf")
         # delete the draw object
         del draw
         # show the image

@@ -20,7 +20,6 @@ import pandas as pd
 
 # requires pyopenssl
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
 login = LoginManager(app)
@@ -128,11 +127,14 @@ def load_dashboard():
         filesProcessed.append([accessName, accessTime])
 
     # from filesProcessed create a dataframe
-    dfFilesProcessed = pd.DataFrame(filesProcessed, columns=["Name", "Access Time"])
+    dfFilesProcessed = pd.DataFrame(
+        filesProcessed, columns=["Name", "Access Time"])
     # convert the access time to keep day, month and year and hour
-    dfFilesProcessed["Access Time"] = dfFilesProcessed["Access Time"].dt.strftime("%d/%m/%Y %H")
+    dfFilesProcessed["Access Time"] = dfFilesProcessed["Access Time"].dt.strftime(
+        "%d/%m/%Y %H")
     # now groupby the access time and count the number of access, put the result in a new column called "Numero Accessi"
-    dfFilesProcessed = dfFilesProcessed.groupby("Access Time").size().reset_index(name="Numero Accessi")
+    dfFilesProcessed = dfFilesProcessed.groupby(
+        "Access Time").size().reset_index(name="Numero Accessi")
     print(dfFilesProcessed)
     # create the graph in plotly, in which the x axis is the access time and the y axis is the number of access.Barchart legend is the name of the person
     fig = px.bar(dfFilesProcessed, x="Access Time", y="Numero Accessi")
@@ -204,7 +206,7 @@ def add_perm():
             identificativo = identificativo + "_" + str(len(cognome))
         while identificativo in keys:
             identificativo = identificativo[:-1] + \
-                             str(int(identificativo.split("_")[2]) + 1)
+                str(int(identificativo.split("_")[2]) + 1)
         # se tutti i campi sono stati riempiti
         if nome and image and cognome:
             perm[identificativo] = n_c
@@ -242,7 +244,8 @@ def delete(p):
 @login_required
 def get_image(p):
     # get the image data from your database or wherever it is stored
-    client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+    client = storage.Client.from_service_account_json(
+        'facerecognition2023-84f934357826.json')
     bucket = client.bucket('face_db')
     blob = bucket.blob('training/' + p + '.png')
     image_data = blob.download_as_string()
@@ -256,7 +259,8 @@ def get_image(p):
 @login_required
 def change(p):
     if request.method == 'GET':
-        client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+        client = storage.Client.from_service_account_json(
+            'facerecognition2023-84f934357826.json')
         bucket = client.bucket('face_db')
         blob = bucket.blob('Permessi.json')
         perm = json.load(BytesIO(blob.download_as_string()))
@@ -268,7 +272,8 @@ def change(p):
     # se il metodo è post allora salvo i dati nel db su cloud storage
     else:
         print("ciao")
-        client = storage.Client.from_service_account_json('facerecognition2023-84f934357826.json')
+        client = storage.Client.from_service_account_json(
+            'facerecognition2023-84f934357826.json')
         bucket = client.bucket('face_db')
         blob = bucket.blob('Permessi.json')
         perm = json.load(BytesIO(blob.download_as_string()))
@@ -284,7 +289,8 @@ def change(p):
             blob.upload_from_string(json.dumps(perm))
             if image:
                 blob = bucket.blob('training/' + identificativo + '.png')
-                blob.upload_from_string(image.read(), content_type=image.content_type)
+                blob.upload_from_string(
+                    image.read(), content_type=image.content_type)
                 # inizia il processo di encoding del nuovo set di volti
                 frec.encode_known_faces()
             else:
@@ -335,13 +341,12 @@ def upload():
         if recognition_result[0] == 'Sconosciuto':
             print('Utente non riconosciuto')
             return 'Utente non riconosciuto'
+        elif recognition_result[0] == "Nf":
+            print('Volto non trovato')
+            return 'Volto non trovato'
         else:
-            if recognition_result[0] == '"Volto_non_trovato"':
-                print('Volto non trovato')
-                return 'Volto non trovato'
-            else:
-                print('Benvenuto ' + recognition_result[0].split('.p')[0])
-                return 'Benvenuto ' + recognition_result[0].split('.p')[0]
+            print('Benvenuto ' + recognition_result[0].split('.p')[0])
+            return 'Benvenuto ' + recognition_result[0].split('.p')[0]
 
 
 @app.route('/logout')

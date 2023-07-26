@@ -38,13 +38,11 @@ function capture() {
     videoElement.style.display = 'none';
     img.style.display = 'block';
     img.src = imageData;
-
     // Generate a unique filename for the image (you can use a timestamp or a random string)
     const uniqueFilename = generateUniqueFilename();
-    
 
     // Leggi la stringa di codifica in base64 come un blob e avvia la lettura del file
-    const blob = new b64toBlob(imageData);
+    const blob = b64toBlob(imageData);
     const file = new File([blob], uniqueFilename, {type: "image/png"});
     const fd = new FormData();
 
@@ -60,6 +58,12 @@ function capture() {
         $('#result').text(data);
         console.log(data);
         document.getElementById("result").style.display = "block";
+        // if the data starts with "Benvenuto" then the background color is green, otherwise it is red
+        if (data.startsWith("Benvenuto")) {
+            document.getElementById("result").style.backgroundColor = "green";
+        } else {
+            document.getElementById("result").style.backgroundColor = "red";
+        }
     });
 }
 
