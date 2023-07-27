@@ -98,6 +98,9 @@ def list_bucket_files():
 def load_dashboard():
     # Call the function to fetch the list of files from the GCS bucket
     files, links = list_bucket_files()
+    # order links and files by access time descending
+    links.sort(key=lambda x: x.split('<->')[0], reverse=True)
+    files.sort(key=lambda x: x.split('<->')[0], reverse=True)
     filesProcessed = list()
     for i in range(len(files)):
         if '<->' not in files[i]:
