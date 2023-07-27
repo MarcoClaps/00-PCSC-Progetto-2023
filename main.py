@@ -136,17 +136,17 @@ def load_dashboard():
     dfFilesProcessed = dfFilesProcessed.groupby(
         "Access Time").size().reset_index(name="Numero Accessi")
     # print(dfFilesProcessed)
-    # order the dataframe by access time, descending
-    dfFilesProcessed = dfFilesProcessed.sort_values(
-        by="Access Time", ascending=False)
+    
     # create the graph in plotly, in which the x axis is the access time and the y axis is the number of access.Barchart legend is the name of the person
     fig = px.bar(dfFilesProcessed, x="Access Time", y="Numero Accessi")
     # set y axs name to be "Accessi"
     fig.update_yaxes(title_text="Accessi")
-
     # convert the graph in json
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-
+    
+    # order the dataframe by access time, descending
+    dfFilesProcessed = dfFilesProcessed.sort_values(
+        by="Access Time", ascending=False)
     # create the table with the list of the files
     tabulated = tabulate(filesProcessed, tablefmt="html",
                          headers=["Name", "Access Time"])

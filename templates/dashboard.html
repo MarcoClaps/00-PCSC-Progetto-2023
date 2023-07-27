@@ -23,8 +23,10 @@
   <br>
   <div id='chart' class="chart"></div>
   <br>
-  <input type="text" id="accessInput" onkeyup="lookNames()" placeholder="Search for names.." title="Type in a name">
-  {{ listaFoto |safe}}
+  <div style="overflow: scroll;">
+    <input type="text" id="accessInput" onkeyup="lookNames()" placeholder="Search for names.." title="Type in a name">
+    {{ listaFoto |safe}}
+  </div>
 
 </body>
 
