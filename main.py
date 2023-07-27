@@ -144,9 +144,8 @@ def load_dashboard():
     # convert the graph in json
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     
-    # order the dataframe by access time, descending
-    dfFilesProcessed = dfFilesProcessed.sort_values(
-        by="Access Time", ascending=False)
+    # order the list of files by access time
+    filesProcessed.sort(key=lambda x: x[1], reverse=True)
     # create the table with the list of the files
     tabulated = tabulate(filesProcessed, tablefmt="html",
                          headers=["Name", "Access Time"])
