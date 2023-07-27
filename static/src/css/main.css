@@ -133,7 +133,7 @@
     display: none;
     margin-top: 2% !important;
     overflow: hidden;
-    width: 500px;
+    width: auto;
     margin: 0 auto;
     border-radius: 10px;
     text-align: center;

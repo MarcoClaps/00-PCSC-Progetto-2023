@@ -58,7 +58,7 @@ function capture() {
     }).done(function (data) {
         $('#result').text(data);
         console.log(data);
-        document.getElementById("result").style.display = "flex";
+        document.getElementById("result").style.display = "block";
         // if the data starts with "Benvenuto" then the background color is green, otherwise it is red
         if (data.startsWith("Benvenuto")) {
             document.getElementById("result").style.backgroundColor = "green";
