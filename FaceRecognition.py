@@ -86,12 +86,14 @@ class FaceRecognition():
                     BytesIO(filepath.download_as_bytes()))
                 print("image: ", image)
                 # found the patches of the face
+                print("Finding face locations...")
                 face_locations = face_recognition.face_locations(image,
                                                                  model=model)
                 # encode the face
+                print("Encoding face...")
                 face_encodings = face_recognition.face_encodings(image,
                                                                  face_locations)
-
+                print("Face encodings: ", face_encodings)
                 for encoding in face_encodings:
                     names.append(self.validation_path)
                     encodings.append(encoding)
