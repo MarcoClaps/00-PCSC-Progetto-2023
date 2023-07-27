@@ -135,7 +135,10 @@ def load_dashboard():
     # now groupby the access time and count the number of access, put the result in a new column called "Numero Accessi"
     dfFilesProcessed = dfFilesProcessed.groupby(
         "Access Time").size().reset_index(name="Numero Accessi")
-    print(dfFilesProcessed)
+    # print(dfFilesProcessed)
+    # order the dataframe by access time, descending
+    dfFilesProcessed = dfFilesProcessed.sort_values(
+        by="Access Time", ascending=False)
     # create the graph in plotly, in which the x axis is the access time and the y axis is the number of access.Barchart legend is the name of the person
     fig = px.bar(dfFilesProcessed, x="Access Time", y="Numero Accessi")
     # set y axs name to be "Accessi"
