@@ -155,7 +155,7 @@ def load_dashboard():
     tabulated_rows = tabulated.split("<tr>")
     for row in range(2, len(tabulated_rows)):
         tabulated_cols = tabulated_rows[row].split("<td>")
-        tabulated_cols[1] = f"<a href='{links[row - 2]}'>{tabulated_cols[1]}"
+        tabulated_cols[1] = f"<a href='{links[row - 2]}' target='_blank' rel='noopener noreferrer'>{tabulated_cols[1]}"
         # rejoin cols
         tabulated_rows[row] = "<td>".join(tabulated_cols)
 
