@@ -66,43 +66,46 @@ class FaceRecognition():
         # Cloud file
         bucket = self.cs_client.bucket('face_db')
         blobs = bucket.list_blobs(prefix="training/")
-        for filepath in blobs:
-            if filepath.name == "training/":
-                continue
+        try:
+            for filepath in blobs:
+                if filepath.name == "training/":
+                    continue
 
-            print("Filepath: ", filepath)
-            self.validation_path = filepath.name.split(" .")[0].split("/")[1]
-            # print the path
-            print("Encoding: ", self.validation_path)
-            # append the path to the list
-            self.validation_images.append(filepath)
+                print("Filepath: ", filepath)
+                self.validation_path = filepath.name.split(" .")[0].split("/")[1]
+                # print the path
+                print("Encoding: ", self.validation_path)
+                # append the path to the list
+                self.validation_images.append(filepath)
 
-            # load the image
-            # Local file
-            # image = face_recognition.load_image_file(filepath)
-            # Cloud file
-            image = face_recognition.load_image_file(
-                BytesIO(filepath.download_as_bytes()))
-            print("image: ", image)
-            # found the patches of the face
-            face_locations = face_recognition.face_locations(image,
-                                                             model=model)
-            # encode the face
-            face_encodings = face_recognition.face_encodings(image,
-                                                             face_locations)
+                # load the image
+                # Local file
+                # image = face_recognition.load_image_file(filepath)
+                # Cloud file
+                image = face_recognition.load_image_file(
+                    BytesIO(filepath.download_as_bytes()))
+                print("image: ", image)
+                # found the patches of the face
+                face_locations = face_recognition.face_locations(image,
+                                                                 model=model)
+                # encode the face
+                face_encodings = face_recognition.face_encodings(image,
+                                                                 face_locations)
 
-            for encoding in face_encodings:
-                names.append(self.validation_path)
-                encodings.append(encoding)
+                for encoding in face_encodings:
+                    names.append(self.validation_path)
+                    encodings.append(encoding)
 
-            print("Names: ", names)
-            print("Encodings: ", encodings)
-        # save the encodings
-        self.name_encodings = {"names": names, "encodings": encodings}
-        print("Saving encodings to disk...")
-        # TODO: save the encodings to the cloud
-        blob = bucket.blob("encodings.pkl")
-        blob.upload_from_string(pickle.dumps(self.name_encodings))
+                print("Names: ", names)
+                print("Encodings: ", encodings)
+            # save the encodings
+            print("Saving encodings to disk...")
+            self.name_encodings = {"names": names, "encodings": encodings}
+            print("Saving encodings to disk...")
+            blob = bucket.blob("encodings.pkl")
+            blob.upload_from_string(pickle.dumps(self.name_encodings))
+        except Exception as e:
+            print("Error: ", e)
 
         # with encodings_location.open("wb") as f:
         #     pickle.dump(self.name_encodings, f)
