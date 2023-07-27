@@ -135,7 +135,8 @@
     overflow: hidden;
     text-align: center !important;
     width: auto;
-    margin: 0 auto;
+    margin-left: 5% !important;
+    margin-right: 5% !important;
     border-radius: 10px;
     line-height: 64px;
     color: #f2f2f2;
