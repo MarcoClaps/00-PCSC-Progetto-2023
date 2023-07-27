@@ -95,6 +95,8 @@ class FaceRecognition():
                 names.append(self.validation_path)
                 encodings.append(encoding)
 
+        print("Names: ", names)
+        print("Encodings: ", encodings)
         # save the encodings
         self.name_encodings = {"names": names, "encodings": encodings}
         print("Saving encodings to disk...")

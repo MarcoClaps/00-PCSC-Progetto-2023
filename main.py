@@ -219,7 +219,6 @@ def add_perm():
             blob.upload_from_string(
                 image.read(), content_type=image.content_type)
             # inizia il processo di encoding del nuovo set di volti
-            frec = FaceRecognition()
             frec.encode_known_faces()
             return "saved_add"
         else:
