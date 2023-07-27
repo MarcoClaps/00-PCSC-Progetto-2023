@@ -21,12 +21,12 @@
   </div>
 
   <br>
-  <div id='chart' class="chart"></div>
-  <br>
-  <div style="overflow: scroll;">
-    <input type="text" id="accessInput" onkeyup="lookNames()" placeholder="Search for names.." title="Type in a name">
-    {{ listaFoto |safe}}
+  <div class="container" style="border-color: transparent;">
+    <div id='chart' class="chart"></div>
   </div>
+  <br>
+  <input type="text" id="accessInput" onkeyup="lookNames()" placeholder="Search for names.." title="Type in a name">
+  {{ listaFoto |safe}}
 
 </body>
 
