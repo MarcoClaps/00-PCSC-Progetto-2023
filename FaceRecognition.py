@@ -95,14 +95,17 @@ class FaceRecognition():
                 names.append(self.validation_path)
                 encodings.append(encoding)
 
-        print("Names: ", names)
-        print("Encodings: ", encodings)
+            print("Names: ", names)
+            print("Encodings: ", encodings)
         # save the encodings
         self.name_encodings = {"names": names, "encodings": encodings}
         print("Saving encodings to disk...")
         # TODO: save the encodings to the cloud
-        with encodings_location.open("wb") as f:
-            pickle.dump(self.name_encodings, f)
+        blob = bucket.blob("encodings.pkl")
+        blob.upload_from_string(pickle.dumps(self.name_encodings))
+
+        # with encodings_location.open("wb") as f:
+        #     pickle.dump(self.name_encodings, f)
 
         # save the list of images
         print("Saving encodings list")
@@ -173,8 +176,11 @@ class FaceRecognition():
         # set the encodings location
         encodings_location = self.DEFAULT_ENCODINGS_PATH.joinpath(
             'encodings.pkl')
-        with encodings_location.open(mode="rb") as f:
-            loaded_encodings = pickle.load(f)
+        # with encodings_location.open(mode="rb") as f:
+        #     loaded_encodings = pickle.load(f)
+        bucket = self.cs_client.bucket('face_db')
+        blob = bucket.blob("encodings.pkl")
+        loaded_encodings = pickle.loads(blob.download_as_string())
 
         print("Loading the image...")
 
