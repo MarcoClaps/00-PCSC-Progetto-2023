@@ -340,7 +340,7 @@ html {
 body {
     background-color: #935d8c;
     background-image: url("../img/bodyBackground.jpg");
-    background-repeat: no-repeat;
+    background-repeat: repeat-y;
 }
 
 body.is-preload *,
