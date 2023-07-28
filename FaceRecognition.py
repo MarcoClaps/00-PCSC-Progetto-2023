@@ -6,6 +6,7 @@ from collections import Counter
 from PIL import Image, ImageDraw
 from google.cloud import storage
 import numpy as np
+import json 
 
 
 class FaceRecognition():
@@ -255,9 +256,20 @@ class FaceRecognition():
             name = self._recognize_face(unknown_encoding, loaded_encodings)
             if not name:
                 print("Volto non riconosciuto")
-                name = "Sconoisciuto"
+                name = "Sconosciuto"
                 self.recognition_results.append("Sconosciuto")
             else:
+                # get the file Permessi.json from the cloud
+                bucket = self.cs_client.bucket('face_db')
+                blob = bucket.blob("Permessi.json")
+                # load the json file
+                json_file = json.loads(blob.download_as_string())
+                # seek for name in the json file, name is the value and get the key
+                name=name.replace(".png", "")
+                for key, value in json_file.items():
+                    if name == key:
+                        name = value.replace("__", " ").replace("_", " ")
+                
                 print("Riconosciuto", name)
                 self.recognition_results.append(name)
 
