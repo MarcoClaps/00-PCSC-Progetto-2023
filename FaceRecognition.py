@@ -51,6 +51,16 @@ class FaceRecognition():
         self.validation_path = validation_path
         self.recognition_results = list()
         pass
+    
+    def downgrade_resolution(original_image,target_width, target_height):
+        try:
+            # Resize the image to the target resolution
+            resized_image = original_image.resize((target_width, target_height), Image.LANCZOS)
+            print("Image resolution downgraded successfully!")
+            return resized_image
+        
+        except Exception as e:
+            print("Error:", e)
 
     def encode_known_faces(self, model: str = "cnn"):
         """
@@ -62,7 +72,7 @@ class FaceRecognition():
         print("Encoding known faces...", '\n')
         names = []
         encodings = []
-        encodings_location = self.DEFAULT_ENCODINGS_PATH.joinpath('encodings.pkl')
+        # encodings_location = self.DEFAULT_ENCODINGS_PATH.joinpath('encodings.pkl')
         # Cloud file
         bucket = self.cs_client.bucket('face_db')
         blobs = bucket.list_blobs(prefix="training/")
@@ -84,6 +94,10 @@ class FaceRecognition():
                 # Cloud file
                 image = face_recognition.load_image_file(
                     BytesIO(filepath.download_as_bytes()))
+                
+                # downgrade the resolution of the image
+                image = self.downgrade_resolution(image, 640, 480)
+                
                 print("image: ", image)
                 # found the patches of the face
                 print("Finding face locations...")
