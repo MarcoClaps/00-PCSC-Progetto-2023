@@ -167,7 +167,9 @@ button.primary.icon:before,
 
 body {
     font-family: Arial, sans-serif;
+    background-color: #fb7304;
     background: url(../img/bodyBackground.jpg);
+    background-repeat: round;
 }
 
 form {

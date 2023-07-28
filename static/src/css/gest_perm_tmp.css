@@ -1,5 +1,7 @@
 body {
+    background-color: #fb7304;
     background: url("../img/bodyBackground.jpg");
+    background-repeat: round;
     margin: 0;
     padding: 0;
 }
