@@ -30,7 +30,7 @@ function capture() {
     canvasElement.height = videoElement.videoHeight;
     context.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
     const imageData = canvasElement.toDataURL('image/png');
-    
+
     const img = document.getElementById("camera");
     // Pause the video and display the current frame as an image
     // #videoElement.pause();
@@ -46,6 +46,13 @@ function capture() {
     const blob = new b64toBlob(imageData);
     const file = new File([blob], uniqueFilename, {type: "image/png"});
     const fd = new FormData();
+    const loader = document.getElementById('loader');
+    const result = document.getElementById('result-modal');
+    const loaderText = document.getElementById('loader-text');
+    const resultText = document.getElementById('result-text');
+    const resultIcon = document.querySelector('.result-icon');
+    loader.style.display = 'block';
+    loaderText.textContent = 'Caricamento in corso...';
 
     fd.append('file', file);
 
@@ -61,9 +68,17 @@ function capture() {
         document.getElementById("result").style.display = "flex";
         // if the data starts with "Benvenuto" then the background color is green, otherwise it is red
         if (data.startsWith("Benvenuto")) {
+            loader.style.display = 'none';
+            result.style.display = 'block';
+            resultText.textContent = 'Risposta positiva dal server';
+            resultIcon.style.backgroundImage = "url('https://image.flaticon.com/icons/svg/54/54753.svg')";
             document.getElementById("result").style.backgroundColor = "green";
         } else {
             document.getElementById("result").style.backgroundColor = "red";
+            loader.style.display = 'none';
+            result.style.display = 'block';
+            resultText.textContent = 'Risposta negativa dal server';
+            resultIcon.style.backgroundImage = "url('https://image.flaticon.com/icons/svg/60/60992.svg')";
         }
     });
 }
@@ -87,6 +102,7 @@ function generateUniqueFilename() {
     // Example using a timestamp:
     return `${Date.now()}.png`;
 }
+
 
 function openCamera() {
 
@@ -123,7 +139,7 @@ function openCamera() {
                     contentType: false
                 }).done(function (data) {
                     $('#result').text(data);
-                    console.log(data);                
+                    console.log(data);
                 });
 
                 // window.setTimeout(capture, 100000);

@@ -1,42 +1,86 @@
 <!DOCTYPE HTML>
 
 <html>
-  <head>
+<head>
     <title>DoorBell</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-    <link rel="icon" href="../static/src/img/logo.ico" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+    <link rel="icon" href="../static/src/img/logo.ico"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="static/src/js/OpenCamera.js"></script>
-    <link rel="stylesheet" href="../static/src/css/main.css" />
-  </head>
+    <link rel="stylesheet" href="../static/src/css/main.css"/>
+</head>
 
-  <body class="is-preload">
-    <div id="wrapper">
-      <!-- Header -->
-      <img id="logo" src="../static/src/img/logo.png" />
+<body class="is-preload">
+<div id="wrapper">
+    <!-- Header -->
+    <img id="logo" src="../static/src/img/logo.png"/>
 
-      <div class="content-img">
-        <img id="camera" class="video-content" />
+    <div class="content-img">
+        <img id="camera" class="video-content"/>
         <video id="videoElement" class="video-content" autoplay muted></video>
 
-        <img id="cornice" src="../static/src/img/cornice.jpg" />
+        <img id="cornice" src="../static/src/img/cornice.jpg"/>
         <button type="button" id="startcamera" onclick="startCamera()">Usa Camera</button>
-      </div>
-      <br />
-      <br />
-      <div class="container", style="border-color: transparent;">
+    </div>
+    <br/>
+    <br/>
+    <div class="container" , style="border-color: transparent;">
         <div id="result" style="text-align: center;">
             Result
-           </div>
-      </div>
-      <br />
-      <div style="text-align: center;">
-        <span onclick="capture()"><img src="../static/src/img/doorbellButton.png" style="width: 25%;height: auto; background: none;" alt="" /></span>
-      </div>
-      <br>
-      <br>
-      <a href="/dashboard"><button type="button">Admin dashboard</button></a>
+        </div>
     </div>
-  </body>
+    <br/>
+    <div style="text-align: center;">
+        <span onclick="capture()"><img src="../static/src/img/doorbellButton.png"
+                                       style="width: 25%;height: auto; background: none;" alt=""/></span>
+    </div>
+    <br>
+    <br>
+    <a href="/dashboard">
+        <button type="button">Admin dashboard</button>
+    </a>
+
+</div>
+<div id="loader" class="loader">
+    <div class="loader-content">
+        <div class="loader-icon">
+            <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+            <lord-icon
+                    src="https://cdn.lordicon.com/xjovhxra.json"
+                    trigger="loop"
+                    colors="primary:#121331,secondary:#08a88a"
+                    style="width:250px;height:250px">
+            </lord-icon>
+        </div>
+        <p id="loader-text">Caricamento in corso...</p>
+    </div>
+</div>
+<div id="result-modal" class="result">
+    <div class="result-content">
+        <div class="result-icon-enter">
+            <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+            <lord-icon
+                    src="https://cdn.lordicon.com/twopqjaj.json"
+                    trigger="loop"
+                    colors="primary:#121331,secondary:#ebe6ef,tertiary:#f9c9c0,quaternary:#f24c00,quinary:#3a3347,senary:#b26836,septenary:#2ca58d"
+                    style="width:250px;height:250px">
+            </lord-icon>
+        </div>
+        <div class="result-icon-error">
+            <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
+            <lord-icon
+                    src="https://cdn.lordicon.com/tdrtiskw.json"
+                    trigger="loop"
+                    delay="2000"
+                    colors="primary:#c71f16,secondary:#c71f16"
+                    style="width:250px;height:250px">
+            </lord-icon>
+        </div>
+        <p id="result-text">Risposta del server</p>
+
+
+    </div>
+</div>
+</body>
 </html>
