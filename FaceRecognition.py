@@ -5,6 +5,7 @@ import pickle
 from collections import Counter
 from PIL import Image, ImageDraw
 from google.cloud import storage
+import numpy as np
 
 
 class FaceRecognition():
@@ -98,8 +99,12 @@ class FaceRecognition():
                 image = face_recognition.load_image_file(
                     BytesIO(filepath.download_as_bytes()))
 
+                # image is an array but i want a real image so convert it back
+                image = Image.fromarray(image)
                 # downgrade the resolution of the image
                 image = self.downgrade_resolution(image, 640, 480)
+                image = image.convert('RGB')
+                image = np.array(image)
 
                 print("image: ", image)
                 # found the patches of the face
