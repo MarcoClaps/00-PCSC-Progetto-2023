@@ -19,7 +19,8 @@ class FaceRecognition():
         """
 
         # super variabiles
-        self.DEFAULT_ENCODINGS_PATH = Path("face-recognizer").joinpath('output')
+        self.DEFAULT_ENCODINGS_PATH = Path(
+            "face-recognizer").joinpath('output')
         self.BOUNDING_BOX_COLOR = (0, 0, 255)  # blue
         self.TEXT_COLOR = (255, 255, 255)  # white
 
@@ -51,14 +52,15 @@ class FaceRecognition():
         self.validation_path = validation_path
         self.recognition_results = list()
         pass
-    
-    def downgrade_resolution(original_image,target_width, target_height):
+
+    def downgrade_resolution(self, original_image, target_width, target_height):
         try:
             # Resize the image to the target resolution
-            resized_image = original_image.resize((target_width, target_height), Image.LANCZOS)
+            resized_image = original_image.resize(
+                (target_width, target_height), Image.LANCZOS)
             print("Image resolution downgraded successfully!")
             return resized_image
-        
+
         except Exception as e:
             print("Error:", e)
 
@@ -82,7 +84,8 @@ class FaceRecognition():
                     continue
 
                 print("Filepath: ", filepath)
-                self.validation_path = filepath.name.split(" .")[0].split("/")[1]
+                self.validation_path = filepath.name.split(" .")[
+                    0].split("/")[1]
                 # print the path
                 print("Encoding: ", self.validation_path)
                 # append the path to the list
@@ -94,10 +97,10 @@ class FaceRecognition():
                 # Cloud file
                 image = face_recognition.load_image_file(
                     BytesIO(filepath.download_as_bytes()))
-                
+
                 # downgrade the resolution of the image
                 image = self.downgrade_resolution(image, 640, 480)
-                
+
                 print("image: ", image)
                 # found the patches of the face
                 print("Finding face locations...")
@@ -221,7 +224,8 @@ class FaceRecognition():
         # self.input_image = face_recognition.load_image_file(
         #     BytesIO(filepath.download_as_bytes()))
         if self.input_image:
-            self.input_image = face_recognition.load_image_file(self.input_image)
+            self.input_image = face_recognition.load_image_file(
+                self.input_image)
         else:
             print("no image")
 
@@ -234,7 +238,7 @@ class FaceRecognition():
         input_face_encodings = face_recognition.face_encodings(
             self.input_image, input_face_locations
         )
-        
+
         # generate the pillow image
         pillow_image = Image.fromarray(self.input_image)
         # create the draw object
