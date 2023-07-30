@@ -26,6 +26,7 @@ body{
   top: -50px;
   left: calc(50% - 50px);
 }
+
 h1{
   margin: 0;
   padding: 0, 0, 20px;
@@ -61,7 +62,7 @@ h1{
 }
 .login-box input[type="submit"]:hover{
   cursor: pointer;
-  background: #ffa500;
+  background: #ffa600;
   color: #000;
 }
 .login-box a{
@@ -70,5 +71,5 @@ h1{
   color: #fff;
 }
 .login-box a:hover{
-  color: #ffa500;
+  color: #ffa600;
 }
