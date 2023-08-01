@@ -138,14 +138,14 @@ def load_dashboard():
     dfFilesProcessed = dfFilesProcessed.groupby(
         "Access Time").size().reset_index(name="Numero Accessi")
     # print(dfFilesProcessed)
-    
+
     # create the graph in plotly, in which the x axis is the access time and the y axis is the number of access.Barchart legend is the name of the person
     fig = px.bar(dfFilesProcessed, x="Access Time", y="Numero Accessi")
     # set y axs name to be "Accessi"
     fig.update_yaxes(title_text="Accessi")
     # convert the graph in json
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    
+
     # order the list of files by access time
     filesProcessed.sort(key=lambda x: x[1], reverse=True)
     # create the table with the list of the files
@@ -210,7 +210,7 @@ def add_perm():
             identificativo = identificativo + "_" + str(len(cognome))
         while identificativo in keys:
             identificativo = identificativo[:-1] + \
-                str(int(identificativo.split("_")[2]) + 1)
+                             str(int(identificativo.split("_")[2]) + 1)
         # se tutti i campi sono stati riempiti
         if nome and image and cognome:
             perm[identificativo] = n_c
@@ -362,6 +362,6 @@ def logout():
 
 
 if __name__ == '__main__':
-
     # app.run(host='0.0.0.0', port=3003, debug=True)
-    app.run(host='0.0.0.0', port=3003, debug=True, ssl_context=('/etc/ssl/certs/selfsigned.crt', '/etc/ssl/private/selfsigned.key'))
+    app.run(host='0.0.0.0', port=3003, debug=True,
+            ssl_context=('/etc/ssl/certs/selfsigned.crt', '/etc/ssl/private/selfsigned.key'))
