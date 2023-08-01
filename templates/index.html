@@ -9,6 +9,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="static/src/js/OpenCamera.js"></script>
     <link rel="stylesheet" href="../static/src/css/main.css"/>
+    <script>
+
+    </script>
 </head>
 
 <body class="is-preload">
@@ -23,28 +26,22 @@
         <img id="cornice" src="../static/src/img/cornice.jpg"/>
         <button type="button" id="startcamera" onclick="startCamera()">Usa Camera</button>
     </div>
-    <br/>
-    <br/>
-    <div class="container" , style="border-color: transparent;">
-        <div id="result" style="text-align: center;">
-            Result
-        </div>
-    </div>
-    <br/>
+    <br>
+    <br>
     <div style="text-align: center;">
         <span onclick="capture()"><img src="../static/src/img/doorbellButton.png"
                                        style="width: 25%;height: auto; background: none;" alt=""/></span>
     </div>
     <br>
-    <br>
+
     <a href="/dashboard">
         <button type="button">Admin dashboard</button>
     </a>
 
 </div>
-<div id="loader" class="loader">
-    <div class="loader-content">
-        <div class="loader-icon">
+<div id="modal">
+    <div id="modal-content">
+        <div id="loader" class="modal-icon">
             <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
             <lord-icon
                     src="https://cdn.lordicon.com/xjovhxra.json"
@@ -53,12 +50,7 @@
                     style="width:250px;height:250px">
             </lord-icon>
         </div>
-        <p id="loader-text">Caricamento in corso...</p>
-    </div>
-</div>
-<div id="result-modal" class="result">
-    <div class="result-content">
-        <div class="result-icon-enter">
+        <div id="result-enter" class="modal-icon">
             <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
             <lord-icon
                     src="https://cdn.lordicon.com/twopqjaj.json"
@@ -67,7 +59,7 @@
                     style="width:250px;height:250px">
             </lord-icon>
         </div>
-        <div class="result-icon-error">
+        <div id="result-error" class="modal-icon">
             <script src="https://cdn.lordicon.com/bhenfmcm.js"></script>
             <lord-icon
                     src="https://cdn.lordicon.com/tdrtiskw.json"
@@ -77,10 +69,14 @@
                     style="width:250px;height:250px">
             </lord-icon>
         </div>
-        <p id="result-text">Risposta del server</p>
-
-
+        <div class="container" , style="border-color: transparent;">
+            <div id="modal-text">
+                Result
+            </div>
+        </div>
     </div>
 </div>
+</div>
+
 </body>
 </html>

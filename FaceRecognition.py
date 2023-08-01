@@ -281,7 +281,7 @@ class FaceRecognition():
         # delete the draw object
         del draw
         # show the image
-        pillow_image.show()
+        # pillow_image.show()
         # convert the image to png without saving locally
         pillow_image = pillow_image.convert("RGB")
         # Buffer to gather the image

@@ -1,5 +1,31 @@
 let camera_start = false;
 
+function adattaZoom() {
+    // Calcola l'altezza della finestra del browser
+    var finestraAltezza = window.innerHeight;
+
+    // Calcola l'altezza del contenuto della pagina
+    var contenutoAltezza = document.documentElement.scrollHeight;
+
+    // Calcola il fattore di scala
+    var fattoreScala = finestraAltezza / contenutoAltezza;
+
+
+    // Imposta il fattore di scala come zoom della pagina
+    document.body.style.zoom = fattoreScala;
+    const modal_content = document.getElementById("modal-content")
+    modal_content.style.zoom = 200 - fattoreScala*100 + "%" ;
+    if (fattoreScala >= 1) {
+        modal_content.style.top = '30%';
+    }
+}
+
+// Chiamata iniziale alla funzione per adattare lo zoom all'avvio
+window.onload = adattaZoom;
+
+// Aggiungi un gestore di eventi per adattare lo zoom anche quando la finestra viene ridimensionata
+window.addEventListener("resize", adattaZoom);
+
 function startCamera() {
     camera_start = true;
     navigator.mediaDevices.getUserMedia({video: true}).then(gotMedia).catch(error =>
@@ -10,9 +36,11 @@ function startCamera() {
     // scatta.style.display = 'block';
     const startcamera = document.getElementById('startcamera');
     startcamera.style.display = 'none';
+    console.log("Camera started")
 }
 
 function gotMedia(mediaStream) {
+    console.log("Got media");
     const videoElement = document.getElementById('videoElement');
     videoElement.srcObject = mediaStream;
     videoElement.addEventListener('loadedmetadata', function () {
@@ -22,8 +50,11 @@ function gotMedia(mediaStream) {
 
 function capture() {
     if (!camera_start) {
-        startCamera()
+        console.log("Camera not started");
+        startCamera();
+        return;
     }
+    console.log("Capture");
     const canvasElement = document.createElement('canvas');
     const context = canvasElement.getContext('2d');
     canvasElement.width = videoElement.videoWidth;
@@ -46,14 +77,16 @@ function capture() {
     const blob = new b64toBlob(imageData);
     const file = new File([blob], uniqueFilename, {type: "image/png"});
     const fd = new FormData();
+    const modal = document.getElementById('modal');
     const loader = document.getElementById('loader');
-    const result = document.getElementById('result-modal');
-    const loaderText = document.getElementById('loader-text');
-    const resultText = document.getElementById('result-text');
-    const resultIcon = document.querySelector('.result-icon');
+    const result_enter = document.getElementById('result-enter');
+    const result_error = document.getElementById('result-error');
+    const modalText = document.getElementById('modal-text');
+    modal.style.display = 'block';
     loader.style.display = 'block';
-    loaderText.textContent = 'Caricamento in corso...';
-
+    modalText.style.display = 'block';
+    modalText.textContent = 'Riconoscimento in corso...';
+    modalText.style.backgroundColor = "blue";
     fd.append('file', file);
 
     $.ajax({
@@ -63,23 +96,21 @@ function capture() {
         processData: false,
         contentType: false
     }).done(function (data) {
-        $('#result').text(data);
+        $('#modal-text').text(data);
         console.log(data);
-        document.getElementById("result").style.display = "flex";
         // if the data starts with "Benvenuto" then the background color is green, otherwise it is red
+        loader.style.display = 'none';
         if (data.startsWith("Benvenuto")) {
-            loader.style.display = 'none';
-            result.style.display = 'block';
-            resultText.textContent = 'Risposta positiva dal server';
-            resultIcon.style.backgroundImage = "url('https://image.flaticon.com/icons/svg/54/54753.svg')";
-            document.getElementById("result").style.backgroundColor = "green";
+            result_enter.style.display = 'block';
+            modalText.style.backgroundColor = "green";
         } else {
-            document.getElementById("result").style.backgroundColor = "red";
-            loader.style.display = 'none';
-            result.style.display = 'block';
-            resultText.textContent = 'Risposta negativa dal server';
-            resultIcon.style.backgroundImage = "url('https://image.flaticon.com/icons/svg/60/60992.svg')";
+            result_error.style.display = 'block';
+            modalText.style.backgroundColor = "red";
+            modalText.textContent = data;
         }
+        setTimeout(function () {
+            window.location.reload();
+        }, 10000);
     });
 }
 
